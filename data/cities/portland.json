@@ -1,0 +1,287 @@
+{
+  "id": "portland",
+  "name": "Portland, OR",
+  "place_geoid": "4159000",
+  "last_reviewed": "2026-10-25",
+  "local_context": "Portland projects usually combine state funds through Oregon's centralized application (ORCA) with Portland Housing Bureau gap funding, property tax exemptions and fee waivers. The Portland and Metro housing bonds are nearly fully allocated, so the city is leaning on Portland Clean Energy Fund money and its TIF districts, which set aside at least 45% of their revenue for affordable housing. Six new TIF districts approved in October 2024 started collecting in 2025 but will have little money in their first years.",
+  "districts": {
+    "tif": {
+      "label": "TIF district",
+      "url": "https://www.portlandmaps.com/od/rest/services/COP_OpenData_Boundary/MapServer/1423",
+      "field": "NAME",
+      "display": "the {name} TIF district"
+    },
+    "plan": {
+      "label": "plan district",
+      "url": "https://www.portlandmaps.com/arcgis/rest/services/Public/BPS_Zoning_Code_Layers/MapServer/0",
+      "field": "NAME",
+      "display": "the {name} plan district"
+    },
+    "historic": {
+      "label": "historic or National Register district",
+      "url": "https://www.portlandmaps.com/arcgis/rest/services/Public/BPS_Zoning_Code_Layers/MapServer/122",
+      "field": "NAME",
+      "display": "the {name} historic district"
+    },
+    "neighborhood": {
+      "label": "neighborhood",
+      "url": "https://www.portlandmaps.com/arcgis/rest/services/Public/Boundaries/MapServer/1",
+      "field": "MAPLABEL",
+      "display": "the {name} neighborhood"
+    }
+  },
+  "programs": [
+    {
+      "id": "or_orca_lihtc",
+      "name": "OHCS 9% and 4% LIHTC through ORCA",
+      "level": "state",
+      "type": "Tax credit",
+      "agency": "Oregon Housing and Community Services (OHCS)",
+      "summary": "Oregon's federal housing tax credits and most state rental funding are awarded through the Oregon Centralized Application (ORCA), which keeps a pipeline and waitlist of projects. As of July 2026, new money from the 2025 Legislature was being moved to projects on the ORCA waitlist.",
+      "amount": "Credit amount set by eligible basis",
+      "eligibility": "Submit through ORCA; OHCS scores and places projects in its pipeline.",
+      "deadline": "Rolling intake into the ORCA pipeline",
+      "url": "https://www.oregon.gov/ohcs/rental-housing/housing-development/oregon-centralized-application-orca/Pages/default.aspx",
+      "area": null
+    },
+    {
+      "id": "or_lift_rental",
+      "name": "LIFT Rental (Local Innovation and Fast Track)",
+      "level": "state",
+      "type": "Gap funding",
+      "agency": "Oregon Housing and Community Services (OHCS)",
+      "summary": "State bond-funded money (Article XI-Q general obligation bonds) for new affordable rental units, conversion of non-residential buildings, or buying and converting market-rate rentals. Can be paired with 4% or 9% LIHTC and private activity bonds. Awarded through ORCA under the July 2026 LIFT Rental manual.",
+      "amount": "Project-specific",
+      "eligibility": "Affordable rental projects that meet LIFT and ORCA criteria.",
+      "deadline": "Through the ORCA pipeline",
+      "url": "https://www.oregon.gov/ohcs/rental-housing/housing-development/development-resources/Documents/lift-rental/lift-rental-program-manual-july-2026.pdf",
+      "area": null
+    },
+    {
+      "id": "or_oahtc",
+      "name": "Oregon Affordable Housing Tax Credit (OAHTC)",
+      "level": "state",
+      "type": "State tax credit (interest rate buy-down)",
+      "agency": "Oregon Housing and Community Services (OHCS)",
+      "summary": "The lender gets a state tax credit in exchange for lowering the interest rate on the project's loan, and the savings must be passed on to tenants as lower rents. Listed as available in OHCS's July 2026 resource snapshot.",
+      "amount": "Lower interest rate on the permanent loan",
+      "eligibility": "Affordable rental projects with a participating lender.",
+      "deadline": "Through ORCA while funds last",
+      "url": "https://www.oregon.gov/ohcs/rental-housing/housing-development/oregon-centralized-application-orca/Pages/default.aspx",
+      "area": null
+    },
+    {
+      "id": "or_land_acquisition",
+      "name": "OHCS Land Acquisition Program",
+      "level": "state",
+      "type": "Land acquisition loan",
+      "agency": "Oregon Housing and Community Services (OHCS)",
+      "summary": "Short-term financing to buy land for future affordable housing. Listed as available in OHCS's July 2026 resource snapshot, while the Predevelopment Loan Program was fully subscribed.",
+      "amount": "Project-specific",
+      "eligibility": "Land intended for regulated affordable housing.",
+      "deadline": "Through ORCA while funds last",
+      "url": "https://www.oregon.gov/ohcs/rental-housing/housing-development/oregon-centralized-application-orca/Pages/default.aspx",
+      "area": null
+    },
+    {
+      "id": "metro_bond",
+      "name": "Metro Affordable Housing Bond",
+      "level": "county",
+      "type": "Capital funding",
+      "agency": "Metro (regional government), through the Portland Housing Bureau and Home Forward",
+      "summary": "The 2018 regional bond funded affordable housing across the Portland area. The Portland Housing Bureau's forecast says it is nearly fully allocated; remaining Portland dollars have been offered with city-owned sites, such as the 2026 Mt. Tabor and Burnside RFQ.",
+      "amount": "Remaining funds are limited",
+      "eligibility": "Regulated affordable housing selected through PHB or Home Forward solicitations.",
+      "deadline": "Nearly fully allocated",
+      "url": "https://www.oregonmetro.gov/public-projects/affordable-homes-greater-portland",
+      "area": null
+    },
+    {
+      "id": "metro_shs",
+      "name": "Supportive Housing Services (SHS) and Regional Long-term Rent Assistance",
+      "level": "county",
+      "type": "Rental subsidy / services",
+      "agency": "Metro, Multnomah County and Home Forward",
+      "summary": "The regional SHS tax funds supportive services and Regional Long-term Rent Assistance (RLRA) vouchers, which Home Forward issues with nonprofit service partners. Projects with supportive units can pair capital funding with RLRA subsidies and services.",
+      "amount": "Rent subsidy and service funding",
+      "eligibility": "Units serving people who are homeless or at risk of homelessness.",
+      "deadline": "Through County and Home Forward solicitations",
+      "url": "https://www.oregonmetro.gov/public-projects/supportive-housing-services",
+      "area": null
+    },
+    {
+      "id": "home_forward_pbv",
+      "name": "Home Forward Project-Based Vouchers",
+      "level": "county",
+      "type": "Rental subsidy",
+      "agency": "Home Forward (Multnomah County housing authority)",
+      "summary": "Rental subsidy that stays with designated units in a building, which supports debt sizing. Each PBV awarded reduces the vouchers available to the tenant-based waitlist.",
+      "amount": "Rent subsidy on awarded units",
+      "eligibility": "Awarded through Home Forward solicitations.",
+      "deadline": "Check Home Forward for current solicitations",
+      "url": "https://www.homeforward.org",
+      "area": null
+    },
+    {
+      "id": "phb_nofa",
+      "name": "Portland Housing Bureau funding (NOFAs and RFPs)",
+      "level": "city",
+      "type": "Gap loan",
+      "agency": "Portland Housing Bureau (PHB)",
+      "summary": "PHB offers gap financing through annual NOFAs or RFPs, subject to available resources. Recent rounds include the Winter 2025-26 RFQ for city-owned Mt. Tabor and Burnside sites (predevelopment funding plus Metro Bond or Gateway TIF money; closed May 8, 2026) and a Spring 2025 preservation RFP.",
+      "amount": "Varies by solicitation",
+      "eligibility": "Regulated affordable housing; terms set by each solicitation.",
+      "deadline": "Sign up for PHB funding alerts; no open rental NOFA found as of October 2026",
+      "url": "https://www.portland.gov/phb/affordable-housing-development-funding-incentives/solicitations",
+      "area": null
+    },
+    {
+      "id": "pdx_multe",
+      "name": "MULTE (Multiple-Unit Limited Tax Exemption)",
+      "level": "city",
+      "type": "Property tax exemption",
+      "agency": "Portland Housing Bureau, with Multnomah County",
+      "summary": "A 10-year property tax exemption on the residential part of new multifamily construction, additions or conversions. It is tied to the Inclusionary Housing program, which requires 99 years of restricted rents on a set share of units. The City has capped new exemptions at about $3 million of foregone revenue per year (five-year rolling).",
+      "amount": "10-year exemption on residential improvements",
+      "eligibility": "Projects meeting Inclusionary Housing affordability requirements. The annual cap can limit approvals.",
+      "deadline": "Apply with PHB before permitting",
+      "url": "https://multco.us/info/multe-exemption",
+      "area": null
+    },
+    {
+      "id": "pdx_ih",
+      "kind": "requirement",
+      "name": "Inclusionary Housing program",
+      "level": "city",
+      "type": "Zoning requirement + incentives",
+      "agency": "Portland Housing Bureau / Bureau of Planning and Sustainability",
+      "summary": "Buildings with more than 20 units must include affordable units, kept affordable for 99 years, in exchange for incentives like MULTE and density bonuses. Projects in the Central City get extra property tax exemptions under ordinances effective March 1, 2024. The program is scheduled for review in 2027-28, and the City is updating it to comply with state law SB 1521 (2026).",
+      "amount": "Requirement with offsetting incentives",
+      "eligibility": "Applies citywide to new buildings with more than 20 units.",
+      "deadline": null,
+      "url": "https://www.portland.gov/phb/inclusionary-housing",
+      "area": null
+    },
+    {
+      "id": "pdx_sdc_temp",
+      "name": "Temporary SDC exemption for new housing",
+      "level": "city",
+      "type": "Fee waiver",
+      "agency": "City of Portland (Portland Permitting & Development)",
+      "summary": "System development charges are waived for new housing units with permits issued between August 15, 2025 and September 30, 2028 (ordinance 192082). It applies to all new residential units, not only affordable ones. By October 2026 about 980 units had received waivers.",
+      "amount": "Full SDC waiver (often tens of thousands of dollars per unit)",
+      "eligibility": "New housing permitted inside the window. Developers must request the waiver. Accessory dwelling units built for short-term rental lost the waiver on August 1, 2026.",
+      "deadline": "Permit must be issued by September 30, 2028",
+      "url": "https://www.portland.gov/ppd/news/2026/3/2/incentive-new-housing-construction-off-promising-start",
+      "status": "eligible",
+      "area": null
+    },
+    {
+      "id": "pdx_sdc_affordable",
+      "name": "Affordable Housing SDC Exemption Program",
+      "level": "city",
+      "type": "Fee waiver",
+      "agency": "Portland Housing Bureau (PHB)",
+      "summary": "PHB's permanent SDC exemption for income-restricted housing. For homeownership units, buyers must earn no more than 100% of area median family income and the 2026 sale price cap is $455,000. Confirm current rental-unit terms with PHB.",
+      "amount": "SDC exemption on qualifying units",
+      "eligibility": "Income-restricted units; useful after the temporary waiver ends in 2028.",
+      "deadline": "Apply before permit issuance",
+      "url": "https://www.portland.gov/phb/affordable-housing-development-funding-incentives",
+      "area": null
+    },
+    {
+      "id": "pdx_nplte",
+      "name": "Non-Profit Low-Income Housing Limited Tax Exemption (NPLTE)",
+      "level": "city",
+      "type": "Property tax exemption",
+      "agency": "Portland Housing Bureau (PHB)",
+      "summary": "Annual property tax exemption for low-income rental housing owned by charitable nonprofits, under ORS 307.540-307.548 (extended to 2033).",
+      "amount": "Property tax exemption on qualifying units",
+      "eligibility": "Owner must be a 501(c)(3) or (c)(4). Exempt units must serve households at or below 60% of area median family income at move-in (up to 80% later).",
+      "deadline": "Annual application; the last cycle was due January 31, 2026",
+      "url": "https://www.portland.gov/phb/nplte",
+      "area": null
+    },
+    {
+      "id": "pdx_pcef",
+      "name": "Portland Clean Energy Fund (PCEF) Strategic Program 1",
+      "level": "city",
+      "type": "Grant",
+      "agency": "Portland Housing Bureau, funded by PCEF",
+      "summary": "Grants for energy efficiency and renewable energy upgrades in new and redeveloped regulated affordable multifamily housing in Portland, up to $60 million over five years. The 2026 round offered $10 million.",
+      "amount": "Share of $10 million (2026 round)",
+      "eligibility": "Regulated affordable multifamily projects in the city of Portland.",
+      "deadline": "2026 round was open July 13-31, 2026 (closed); expect an annual round",
+      "url": "https://www.portland.gov/phb/portland-clean-energy-fund-pcef",
+      "area": null
+    },
+    {
+      "id": "pdx_tif",
+      "name": "TIF district affordable housing set-aside",
+      "level": "neighborhood",
+      "type": "Tax increment financing",
+      "agency": "Portland Housing Bureau and Prosper Portland",
+      "summary": "At least 45% of TIF revenue across Portland's districts goes to PHB for affordable housing. The six districts approved October 30, 2024 (82nd Ave Area, East 205, Sumner Parkrose Argay Columbia Corridor, Central Eastside Corridor, Lloyd-Holladay, Westside) are projected to raise over $1 billion for affordable housing over 30 years, but little money is available in their first years. Each has a community committee writing a 5-year action plan.",
+      "amount": "District-specific; spent through PHB solicitations",
+      "eligibility": "Projects inside the district; funds flow through PHB NOFAs and RFPs.",
+      "deadline": "Follow the district's action plan and PHB solicitations",
+      "url": "https://prosperportland.us/portfolio-items/east-portland-tif-exploration",
+      "area": {
+        "district": "tif"
+      }
+    },
+    {
+      "id": "pdx_nne",
+      "kind": "requirement",
+      "name": "N/NE Neighborhood Housing Strategy and Preference Policy",
+      "level": "neighborhood",
+      "type": "Funding priority + tenant selection rule",
+      "agency": "Portland Housing Bureau (PHB)",
+      "summary": "In the Interstate Corridor area, PHB has invested about $135 million in affordable housing for North/Northeast Portland. City-funded projects here use the Preference Policy, which puts current and former longtime N/NE residents first in line for units.",
+      "amount": "Dedicated Interstate Corridor TIF funding",
+      "eligibility": "PHB-funded rental and homeownership projects in the Interstate Corridor area.",
+      "deadline": null,
+      "url": "https://www.portland.gov/phb/nne-oversight",
+      "area": {
+        "district": "tif",
+        "name_contains": [
+          "Interstate Corridor"
+        ]
+      }
+    },
+    {
+      "id": "pdx_central_city_ih",
+      "name": "Central City Inclusionary Housing incentives",
+      "level": "neighborhood",
+      "type": "Property tax exemption",
+      "agency": "Portland Housing Bureau (PHB)",
+      "summary": "Ordinances effective March 1, 2024 offer more property tax exemptions to Inclusionary Housing projects in the Central City, to make high-rise affordable units pencil.",
+      "amount": "Expanded MULTE-style exemption",
+      "eligibility": "Inclusionary Housing projects inside the Central City plan district.",
+      "deadline": null,
+      "url": "https://www.portland.gov/phb/inclusionary-housing",
+      "area": {
+        "district": "plan",
+        "name_contains": [
+          "Central City"
+        ]
+      }
+    },
+    {
+      "id": "pdx_historic",
+      "kind": "requirement",
+      "name": "Historic district review",
+      "level": "neighborhood",
+      "type": "Design review requirement",
+      "agency": "Portland Permitting & Development / Historic Landmarks Commission",
+      "summary": "New construction and exterior changes in a historic or National Register district need historic resource review. Rehabilitating a contributing building can qualify for the 20% federal historic tax credit (Oregon has no state historic credit).",
+      "amount": "Requirement, not funding",
+      "eligibility": "Applies to sites inside a historic or National Register district.",
+      "deadline": null,
+      "url": "https://www.portland.gov/ppd/zoning-land-use/land-use-review-fees-and-types/historic-resource-reviews",
+      "area": {
+        "district": "historic"
+      }
+    }
+  ]
+}

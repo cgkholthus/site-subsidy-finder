@@ -1,0 +1,18 @@
+# Render deployment (https://render.com): a free web service that runs the Python server.
+services:
+  - type: web
+    name: site-subsidy-finder
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python3 app/server.py
+    healthCheckPath: /api/status
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: GEMINI_API_KEY
+        sync: false   # entered by hand in the Render dashboard; never committed
+      - key: CENSUS_API_KEY
+        sync: false

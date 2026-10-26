@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Site Subsidy Finder</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <div class="brand">
+        <h1>Site Subsidy Finder</h1>
+        <p>Enter a development site in <strong>New Orleans, LA</strong> or <strong>Portland, OR</strong> to see the tax credits, grants, loans and requirements that apply at the federal, state, local and neighborhood level.</p>
+      </div>
+      <form id="search" class="search" autocomplete="off">
+        <input id="address" name="address" type="text" placeholder="e.g. 1300 Perdido St, New Orleans, LA 70112" required>
+        <button type="submit">Look up site</button>
+      </form>
+      <p class="examples">Try: <a href="?address=1300%20Perdido%20St%2C%20New%20Orleans%2C%20LA%2070112">1300 Perdido St, New Orleans</a> · <a href="?address=920%20SW%203rd%20Ave%2C%20Portland%2C%20OR%2097204">920 SW 3rd Ave, Portland</a></p>
+      <p id="search-error" class="error" hidden></p>
+    </div>
+  </header>
+
+  <main class="wrap" id="results" hidden>
+    <section class="site">
+      <div class="site-info">
+        <h2 id="site-address"></h2>
+        <dl id="site-facts" class="facts"></dl>
+        <div id="flags" class="flags"></div>
+        <div class="actions">
+          <button id="export" type="button" class="secondary">Download CSV</button>
+        </div>
+      </div>
+      <div id="map" class="map" role="img" aria-label="Map of the site and nearby tax credit properties"></div>
+    </section>
+
+    <section id="city-context" class="city-context"></section>
+
+    <nav class="tabs" role="tablist">
+      <button role="tab" data-level="federal" aria-selected="true">Federal <span class="count"></span></button>
+      <button role="tab" data-level="state">State <span class="count"></span></button>
+      <button role="tab" data-level="local">County &amp; City <span class="count"></span></button>
+      <button role="tab" data-level="neighborhood">Neighborhood <span class="count"></span></button>
+    </nav>
+
+    <section id="panel-federal" class="panel"></section>
+    <section id="panel-state" class="panel" hidden></section>
+    <section id="panel-local" class="panel" hidden></section>
+    <section id="panel-neighborhood" class="panel" hidden>
+      <div id="neighborhood-programs"></div>
+      <h3>Market context</h3>
+      <div id="fmr"></div>
+      <h3>Existing LIHTC properties within 1 mile</h3>
+      <div id="nearby"></div>
+    </section>
+
+    <p class="disclaimer" id="disclaimer"></p>
+  </main>
+
+  <button id="chat-toggle" class="chat-toggle" type="button" aria-expanded="false" aria-controls="chat" hidden>Ask a question</button>
+  <aside id="chat" class="chat" aria-label="Question assistant" hidden>
+    <header class="chat-head">
+      <strong>Ask about programs</strong>
+      <button id="chat-close" type="button" class="chat-close" aria-label="Close chat">×</button>
+    </header>
+    <p class="chat-disclosure"><strong>Student prototype.</strong> This assistant is a student project, not an official or professional service. It answers only from this site's program database, which may be incomplete or out of date, and it does not give legal or tax advice. Questions are sent to Google's Gemini AI.</p>
+    <div id="chat-log" class="chat-log" aria-live="polite"></div>
+    <form id="chat-form" class="chat-form" autocomplete="off">
+      <input id="chat-input" type="text" maxlength="1000" placeholder="e.g. Which programs could cover a funding gap here?" required>
+      <button type="submit">Send</button>
+    </form>
+  </aside>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
