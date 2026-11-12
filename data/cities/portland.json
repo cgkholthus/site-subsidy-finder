@@ -2,26 +2,60 @@
   "id": "portland",
   "name": "Portland, OR",
   "place_geoid": "4159000",
-  "last_reviewed": "2026-10-25",
+  "last_reviewed": "2026-11-11",
   "local_context": "Portland projects usually combine state funds through Oregon's centralized application (ORCA) with Portland Housing Bureau gap funding, property tax exemptions and fee waivers. The Portland and Metro housing bonds are nearly fully allocated, so the city is leaning on Portland Clean Energy Fund money and its TIF districts, which set aside at least 45% of their revenue for affordable housing. Six new TIF districts approved in October 2024 started collecting in 2025 but will have little money in their first years.",
   "districts": {
     "tif": {
       "label": "TIF district",
       "url": "https://www.portlandmaps.com/od/rest/services/COP_OpenData_Boundary/MapServer/1423",
       "field": "NAME",
-      "display": "the {name} TIF district"
+      "display": "the {name} TIF district",
+      "about": {
+        "title": "Tax increment financing (TIF) district",
+        "text": "A Portland TIF district (formerly called an urban renewal area). Growth in property taxes inside the boundary is reinvested in the district, and at least 45% of TIF money citywide goes to affordable housing through the Portland Housing Bureau.",
+        "meaning": "Affordable projects here can compete for the district's housing money through Housing Bureau solicitations. The six districts approved in October 2024 have little money in their first years.",
+        "url": "https://prosperportland.us/portfolio-items/east-portland-tif-exploration"
+      },
+      "names": {
+        "Interstate Corridor": {
+          "title": "Interstate Corridor TIF district",
+          "text": "Portland's North/Northeast district, home to the N/NE Neighborhood Housing Strategy, which has invested about $135 million in affordable housing.",
+          "meaning": "City-funded projects here use the Preference Policy, which puts current and former longtime N/NE residents first in line for units.",
+          "url": "https://www.portland.gov/phb/nne-oversight"
+        }
+      }
     },
     "plan": {
       "label": "plan district",
       "url": "https://www.portlandmaps.com/arcgis/rest/services/Public/BPS_Zoning_Code_Layers/MapServer/0",
       "field": "NAME",
-      "display": "the {name} plan district"
+      "display": "the {name} plan district",
+      "about": {
+        "title": "Plan district",
+        "text": "A plan district adds special zoning rules for a specific area of Portland, on top of the base zoning.",
+        "meaning": "Check the district's chapter of the zoning code for height, density and design rules.",
+        "url": "https://www.portland.gov/code/33/500s"
+      },
+      "names": {
+        "Central City": {
+          "title": "Central City plan district",
+          "text": "Downtown Portland and nearby areas, where the zoning code allows the tallest and densest buildings.",
+          "meaning": "Inclusionary Housing projects here get extra property tax exemptions (ordinances effective March 1, 2024), which help high-rise affordable units pencil.",
+          "url": "https://www.portland.gov/phb/inclusionary-housing"
+        }
+      }
     },
     "historic": {
       "label": "historic or National Register district",
       "url": "https://www.portlandmaps.com/arcgis/rest/services/Public/BPS_Zoning_Code_Layers/MapServer/122",
       "field": "NAME",
-      "display": "the {name} historic district"
+      "display": "the {name} historic district",
+      "about": {
+        "title": "Historic or National Register district",
+        "text": "A historic district recognized by the city or the National Park Service. New construction and exterior changes need historic resource review.",
+        "meaning": "Plan time for design review. Renovating a contributing building can qualify for the 20% federal historic tax credit; Oregon has no state historic credit.",
+        "url": "https://www.portland.gov/ppd/zoning-land-use/land-use-review-fees-and-types/historic-resource-reviews"
+      }
     },
     "neighborhood": {
       "label": "neighborhood",
@@ -42,7 +76,20 @@
       "eligibility": "Submit through ORCA; OHCS scores and places projects in its pipeline.",
       "deadline": "Rolling intake into the ORCA pipeline",
       "url": "https://www.oregon.gov/ohcs/rental-housing/housing-development/oregon-centralized-application-orca/Pages/default.aspx",
-      "area": null
+      "area": null,
+      "project_rules": [
+        {
+          "field": "tenure",
+          "is": "rental",
+          "fail": "This program funds rental housing only."
+        },
+        {
+          "field": "ami",
+          "max": 60,
+          "fail": "LIHTC units must be restricted to 60% AMI or below (or average 60% under income averaging)."
+        }
+      ],
+      "contact": "ohcs"
     },
     {
       "id": "or_lift_rental",
@@ -55,7 +102,20 @@
       "eligibility": "Affordable rental projects that meet LIFT and ORCA criteria.",
       "deadline": "Through the ORCA pipeline",
       "url": "https://www.oregon.gov/ohcs/rental-housing/housing-development/development-resources/Documents/lift-rental/lift-rental-program-manual-july-2026.pdf",
-      "area": null
+      "area": null,
+      "project_rules": [
+        {
+          "field": "tenure",
+          "is": "rental",
+          "fail": "This program funds rental housing only."
+        },
+        {
+          "field": "ami",
+          "max": 80,
+          "fail": "LIFT Rental serves low-income households; confirm the exact income limit in the LIFT manual."
+        }
+      ],
+      "contact": "ohcs"
     },
     {
       "id": "or_oahtc",
@@ -68,7 +128,20 @@
       "eligibility": "Affordable rental projects with a participating lender.",
       "deadline": "Through ORCA while funds last",
       "url": "https://www.oregon.gov/ohcs/rental-housing/housing-development/oregon-centralized-application-orca/Pages/default.aspx",
-      "area": null
+      "area": null,
+      "project_rules": [
+        {
+          "field": "tenure",
+          "is": "rental",
+          "fail": "This program funds rental housing only."
+        },
+        {
+          "field": "ami",
+          "max": 80,
+          "fail": "OAHTC rent reductions are for households at or below 80% AMI."
+        }
+      ],
+      "contact": "ohcs"
     },
     {
       "id": "or_land_acquisition",
@@ -81,7 +154,15 @@
       "eligibility": "Land intended for regulated affordable housing.",
       "deadline": "Through ORCA while funds last",
       "url": "https://www.oregon.gov/ohcs/rental-housing/housing-development/oregon-centralized-application-orca/Pages/default.aspx",
-      "area": null
+      "area": null,
+      "project_rules": [
+        {
+          "field": "ami",
+          "max": 80,
+          "fail": "The Land Acquisition Program is for regulated affordable housing (80% AMI or below)."
+        }
+      ],
+      "contact": "ohcs"
     },
     {
       "id": "metro_bond",
@@ -94,7 +175,19 @@
       "eligibility": "Regulated affordable housing selected through PHB or Home Forward solicitations.",
       "deadline": "Nearly fully allocated",
       "url": "https://www.oregonmetro.gov/public-projects/affordable-homes-greater-portland",
-      "area": null
+      "area": null,
+      "project_rules": [
+        {
+          "field": "ami",
+          "max": 80,
+          "fail": "Metro bond units serve households at or below 80% AMI."
+        }
+      ],
+      "funding": {
+        "status": "limited",
+        "note": "The Metro bond is nearly fully allocated."
+      },
+      "contact": "phb"
     },
     {
       "id": "metro_shs",
@@ -107,7 +200,15 @@
       "eligibility": "Units serving people who are homeless or at risk of homelessness.",
       "deadline": "Through County and Home Forward solicitations",
       "url": "https://www.oregonmetro.gov/public-projects/supportive-housing-services",
-      "area": null
+      "area": null,
+      "project_rules": [
+        {
+          "field": "populations",
+          "has": "homeless",
+          "fail": "SHS money is for units serving people who are homeless or at risk of homelessness."
+        }
+      ],
+      "contact": "metro"
     },
     {
       "id": "home_forward_pbv",
@@ -120,7 +221,15 @@
       "eligibility": "Awarded through Home Forward solicitations.",
       "deadline": "Check Home Forward for current solicitations",
       "url": "https://www.homeforward.org",
-      "area": null
+      "area": null,
+      "project_rules": [
+        {
+          "field": "tenure",
+          "is": "rental",
+          "fail": "This program funds rental housing only."
+        }
+      ],
+      "contact": "home_forward"
     },
     {
       "id": "phb_nofa",
@@ -133,7 +242,19 @@
       "eligibility": "Regulated affordable housing; terms set by each solicitation.",
       "deadline": "Sign up for PHB funding alerts; no open rental NOFA found as of October 2026",
       "url": "https://www.portland.gov/phb/affordable-housing-development-funding-incentives/solicitations",
-      "area": null
+      "area": null,
+      "project_rules": [
+        {
+          "field": "ami",
+          "max": 80,
+          "fail": "Portland Housing Bureau funding is for regulated affordable housing (80% AMI or below)."
+        }
+      ],
+      "funding": {
+        "status": "closed",
+        "note": "No open rental funding round found as of October 2026."
+      },
+      "contact": "phb"
     },
     {
       "id": "pdx_multe",
@@ -141,12 +262,26 @@
       "level": "city",
       "type": "Property tax exemption",
       "agency": "Portland Housing Bureau, with Multnomah County",
-      "summary": "A 10-year property tax exemption on the residential part of new multifamily construction, additions or conversions. It is tied to the Inclusionary Housing program, which requires 99 years of restricted rents on a set share of units. The City has capped new exemptions at about $3 million of foregone revenue per year (five-year rolling).",
-      "amount": "10-year exemption on residential improvements",
-      "eligibility": "Projects meeting Inclusionary Housing affordability requirements. The annual cap can limit approvals.",
-      "deadline": "Apply with PHB before permitting",
-      "url": "https://multco.us/info/multe-exemption",
-      "area": null
+      "summary": "A 10-year property tax exemption on some or all of the residential improvements of a building with 20 or more units, granted in exchange for affordable units. Since February 1, 2017, MULTE is only available to buildings that meet Inclusionary Housing affordability requirements; the restricted units must stay affordable for 99 years.",
+      "amount": "10-year exemption. Restricting units at 60% AMI exempts 100% of residential improvements inside Eligible Neighborhood Analysis Areas; at 80% AMI only the affordable units are exempt there. Inside the Central City plan district either option exempts 100%.",
+      "eligibility": "20+ unit building subject to and meeting Inclusionary Housing (units restricted at 60% or 80% AMI for 99 years). Apply during building permit review, before the permit is issued; the 60% AMI option must be chosen before the building permit is issued.",
+      "deadline": "Apply with the Inclusionary Housing intake form during building permit review",
+      "url": "https://www.portland.gov/phb/multe",
+      "area": null,
+      "project_rules": [
+        {
+          "field": "tenure",
+          "is": "rental",
+          "fail": "This program funds rental housing only."
+        },
+        {
+          "field": "units",
+          "min": 20,
+          "fail": "MULTE is tied to Inclusionary Housing, which covers buildings of 20+ units."
+        }
+      ],
+      "contact": "phb_ih",
+      "limits": "The City caps the property tax revenue it gives up through new MULTE exemptions each year, which can limit approvals."
     },
     {
       "id": "pdx_ih",
@@ -160,7 +295,20 @@
       "eligibility": "Applies citywide to new buildings with more than 20 units.",
       "deadline": null,
       "url": "https://www.portland.gov/phb/inclusionary-housing",
-      "area": null
+      "area": null,
+      "project_rules": [
+        {
+          "field": "construction",
+          "is": "new",
+          "fail": "Only applies to new construction."
+        },
+        {
+          "field": "units",
+          "min": 21,
+          "fail": "Inclusionary Housing only applies to buildings with more than 20 units."
+        }
+      ],
+      "contact": "phb_ih"
     },
     {
       "id": "pdx_sdc_temp",
@@ -174,7 +322,15 @@
       "deadline": "Permit must be issued by September 30, 2028",
       "url": "https://www.portland.gov/ppd/news/2026/3/2/incentive-new-housing-construction-off-promising-start",
       "status": "eligible",
-      "area": null
+      "area": null,
+      "project_rules": [
+        {
+          "field": "construction",
+          "is": "new",
+          "fail": "Only applies to new construction."
+        }
+      ],
+      "contact": "ppd"
     },
     {
       "id": "pdx_sdc_affordable",
@@ -187,7 +343,16 @@
       "eligibility": "Income-restricted units; useful after the temporary waiver ends in 2028.",
       "deadline": "Apply before permit issuance",
       "url": "https://www.portland.gov/phb/affordable-housing-development-funding-incentives",
-      "area": null
+      "area": null,
+      "project_rules": [
+        {
+          "field": "ami",
+          "max": 100,
+          "fail": "The exemption is for income-restricted units."
+        }
+      ],
+      "best_status": "check",
+      "contact": "phb_incentives"
     },
     {
       "id": "pdx_nplte",
@@ -200,7 +365,25 @@
       "eligibility": "Owner must be a 501(c)(3) or (c)(4). Exempt units must serve households at or below 60% of area median family income at move-in (up to 80% later).",
       "deadline": "Annual application; the last cycle was due January 31, 2026",
       "url": "https://www.portland.gov/phb/nplte",
-      "area": null
+      "area": null,
+      "project_rules": [
+        {
+          "field": "tenure",
+          "is": "rental",
+          "fail": "This program funds rental housing only."
+        },
+        {
+          "field": "owner",
+          "is": "nonprofit",
+          "fail": "Only nonprofit owners qualify."
+        },
+        {
+          "field": "ami",
+          "max": 60,
+          "fail": "Exempt units must serve households at or below 60% of area median family income at move-in."
+        }
+      ],
+      "contact": "phb_incentives"
     },
     {
       "id": "pdx_pcef",
@@ -213,7 +396,24 @@
       "eligibility": "Regulated affordable multifamily projects in the city of Portland.",
       "deadline": "2026 round was open July 13-31, 2026 (closed); expect an annual round",
       "url": "https://www.portland.gov/phb/portland-clean-energy-fund-pcef",
-      "area": null
+      "area": null,
+      "project_rules": [
+        {
+          "field": "tenure",
+          "is": "rental",
+          "fail": "This program funds rental housing only."
+        },
+        {
+          "field": "ami",
+          "max": 80,
+          "fail": "PCEF Strategic Program 1 is for regulated affordable housing."
+        }
+      ],
+      "funding": {
+        "status": "closed",
+        "note": "The 2026 round (July 13-31) has closed; expect an annual round."
+      },
+      "contact": "pcef"
     },
     {
       "id": "pdx_tif",
@@ -228,7 +428,8 @@
       "url": "https://prosperportland.us/portfolio-items/east-portland-tif-exploration",
       "area": {
         "district": "tif"
-      }
+      },
+      "contact": "prosper"
     },
     {
       "id": "pdx_nne",
@@ -247,7 +448,8 @@
         "name_contains": [
           "Interstate Corridor"
         ]
-      }
+      },
+      "contact": "phb"
     },
     {
       "id": "pdx_central_city_ih",
@@ -265,23 +467,170 @@
         "name_contains": [
           "Central City"
         ]
-      }
+      },
+      "project_rules": [
+        {
+          "field": "construction",
+          "is": "new",
+          "fail": "Only applies to new construction."
+        },
+        {
+          "field": "units",
+          "min": 21,
+          "fail": "These incentives are for Inclusionary Housing buildings with more than 20 units."
+        }
+      ],
+      "contact": "phb_ih"
     },
     {
       "id": "pdx_historic",
       "kind": "requirement",
-      "name": "Historic district review",
+      "name": "Historic resource review",
       "level": "neighborhood",
       "type": "Design review requirement",
       "agency": "Portland Permitting & Development / Historic Landmarks Commission",
-      "summary": "New construction and exterior changes in a historic or National Register district need historic resource review. Rehabilitating a contributing building can qualify for the 20% federal historic tax credit (Oregon has no state historic credit).",
+      "summary": "New construction and exterior changes in a historic or National Register district, or to an individually listed landmark, need historic resource review. Rehabilitating a listed or contributing building can qualify for the 20% federal historic tax credit (Oregon has no state historic credit).",
       "amount": "Requirement, not funding",
-      "eligibility": "Applies to sites inside a historic or National Register district.",
+      "eligibility": "Applies to sites inside a historic or National Register district, or to individually listed landmarks.",
       "deadline": null,
       "url": "https://www.portland.gov/ppd/zoning-land-use/land-use-review-fees-and-types/historic-resource-reviews",
       "area": {
-        "district": "historic"
-      }
+        "any": [
+          {
+            "district": "historic"
+          },
+          {
+            "flag": "nr_listed"
+          }
+        ]
+      },
+      "contact": "ppd"
     }
-  ]
+  ],
+  "federal_facts": {
+    "home": {
+      "location": "yes",
+      "note": "Portland leads the Portland HOME Consortium (with Gresham and Multnomah County), which receives HOME funds directly from HUD."
+    },
+    "cdbg": {
+      "location": "yes",
+      "note": "The City of Portland is a CDBG entitlement community, administered by the Portland Housing Bureau."
+    }
+  },
+  "national_register_districts": [
+    "historic"
+  ],
+  "market": {
+    "as_of": "November 2026",
+    "cost_per_unit": {
+      "value": 400000,
+      "note": "Portland Housing Bond projects averaged about $385,000/unit (reported July 2024); downtown high-rises often cost more.",
+      "url": "https://wweek.com/news/city/2024/07/20/housing-bureau-expects-to-exceed-unit-goals-with-2016s-bond-cash"
+    },
+    "rent": {
+      "value": 1600,
+      "note": "HUD FY2026: 60% AMI 2-bedroom max rent is $1,733/month (60% limit $69,300 for 3 people), less about $130 for utilities.",
+      "url": "https://www.huduser.gov/datasets/il/il2026/summary-mtsp?year=2026&reporttype_mtsp=hmfa&states=41&counties=4105199999&hmfa=METRO38900M38900"
+    },
+    "opex": {
+      "value": 8500,
+      "note": "Oregon regulated properties averaged $8,198/unit in FY24, up 31% since FY21 (OHCS 2026 portfolio analysis).",
+      "url": "https://www.oregon.gov/ohcs/compliance-monitoring/Documents/portfolio-analysis/2026-porfolio-financial-analysis.pdf"
+    },
+    "dscr": {
+      "value": 1.2,
+      "note": "Typical lender requirement; confirm with your lender and OHCS underwriting.",
+      "url": null
+    },
+    "lihtc_price": {
+      "value": 0.83,
+      "note": "2026 national LIHTC pricing: Novogradac Q1 2026 medians $0.80-$0.89; mid-2026 survey average 82.7 cents.",
+      "url": "https://www.bisnow.com/national/news/affordable-housing/affordable-housing-gaps-funding-lihtc-134169"
+    }
+  },
+  "state_name": "Oregon",
+  "agencies": {
+    "ohcs": {
+      "name": "Oregon Housing and Community Services",
+      "phone": "(800) 453-5511",
+      "url": "https://www.oregon.gov/ohcs/rental-housing/housing-development/oregon-centralized-application-orca/Pages/default.aspx"
+    },
+    "phb": {
+      "name": "Portland Housing Bureau (city information line)",
+      "phone": "(503) 823-4000",
+      "url": "https://www.portland.gov/phb/affordable-housing-development-funding-incentives/solicitations"
+    },
+    "phb_ih": {
+      "name": "Portland Housing Bureau, Inclusionary Housing team",
+      "phone": "(503) 823-9042",
+      "email": "inclusionary-housing@portlandoregon.gov",
+      "url": "https://www.portland.gov/phb/inclusionary-housing"
+    },
+    "phb_incentives": {
+      "name": "Portland Housing Bureau, Development Incentives",
+      "email": "development-incentives@portlandoregon.gov",
+      "url": "https://www.portland.gov/phb/nplte"
+    },
+    "pcef": {
+      "name": "Portland Clean Energy Fund",
+      "email": "CleanEnergyFund@portlandoregon.gov",
+      "url": "https://www.portland.gov/phb/portland-clean-energy-fund-pcef"
+    },
+    "ppd": {
+      "name": "Portland Permitting & Development",
+      "phone": "(503) 823-7300",
+      "url": "https://www.portland.gov/ppd/zoning-land-use/land-use-review-fees-and-types/historic-resource-reviews"
+    },
+    "home_forward": {
+      "name": "Home Forward",
+      "phone": "(503) 802-8300",
+      "url": "https://www.homeforward.org/contact-us/"
+    },
+    "metro": {
+      "name": "Metro (regional government)",
+      "phone": "(503) 797-1700",
+      "url": "https://www.oregonmetro.gov/public-projects/supportive-housing-services"
+    },
+    "prosper": {
+      "name": "Prosper Portland",
+      "phone": "(503) 823-3200",
+      "url": "https://prosperportland.us/"
+    },
+    "or_shpo": {
+      "name": "Oregon State Historic Preservation Office",
+      "phone": "(503) 986-0690",
+      "email": "oregon.heritage@oprd.oregon.gov",
+      "url": "https://www.oregon.gov/oprd/OH/Pages/default.aspx"
+    },
+    "cdfi": {
+      "name": "CDFI Fund Help Desk (U.S. Treasury)",
+      "phone": "(202) 653-0421",
+      "email": "cdfihelp@cdfi.treas.gov",
+      "url": "https://www.cdfifund.gov/contact"
+    },
+    "fhlb": {
+      "name": "FHLBank Des Moines (serves Oregon)",
+      "phone": "(800) 544-3452",
+      "url": "https://www.fhlbdm.com/"
+    },
+    "hud_mf": {
+      "name": "HUD Office of Multifamily Housing",
+      "phone": "(202) 708-1112",
+      "url": "https://www.hud.gov/program_offices/housing/mfh/progdesc/rentcoophsg221d3n4"
+    }
+  },
+  "federal_contacts": {
+    "lihtc9": "ohcs",
+    "lihtc4": "ohcs",
+    "htf": "ohcs",
+    "s811": "ohcs",
+    "home": "phb",
+    "cdbg": "phb",
+    "nmtc": "cdfi",
+    "cmf": "cdfi",
+    "htc": "or_shpo",
+    "fha221d4": "hud_mf",
+    "s202": "hud_mf",
+    "fhlb_ahp": "fhlb"
+  }
 }

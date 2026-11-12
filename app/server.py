@@ -15,6 +15,7 @@ import chat
 import cities
 import geo
 import programs
+import project
 
 ROOT = Path(__file__).resolve().parent.parent
 STATIC_DIR = ROOT / "static"
@@ -35,14 +36,15 @@ def _load_env_file():
 
 
 _load_env_file()
-_lookups = OrderedDict()  # address -> lookup result, so repeat searches skip the map queries
-MAX_CACHED_LOOKUPS = 500
+_sites = OrderedDict()  # address -> map lookup result, so repeat searches and form changes skip the map queries
+MAX_CACHED_SITES = 500
 MAX_CHAT_BODY = 64_000
 
 # Per-visitor limits, so a public deployment can't exhaust the free Gemini quota or hammer the map services.
 RATE_LIMITS = {  # bucket -> [(max requests, window seconds), ...]
     "lookup": [(20, 60), (300, 86_400)],
     "chat": [(6, 60), (60, 86_400)],
+    "suggest": [(90, 60), (2_000, 86_400)],
 }
 _hits = {}
 _hits_lock = threading.Lock()
@@ -62,19 +64,34 @@ def _allow(bucket, client):
         return True
 
 
-def _lookup(address):
-    key = address.strip().lower()
-    if key not in _lookups:
-        result = geo.lookup_site(address)
-        result["programs"] = programs.match(result)
-        city = result["city"]
-        result["city"] = {k: city[k] for k in ("id", "name", "last_reviewed", "local_context")}
-        result["district_chips"] = cities.district_chips(city, result["districts"])
-        result["neighborhood"] = ", ".join(cities.display_name(n) for n in result["districts"].get("neighborhood", []))
-        _lookups[key] = result
-        if len(_lookups) > MAX_CACHED_LOOKUPS:
-            _lookups.popitem(last=False)
-    return _lookups[key]
+def _cache_key(address):
+    return address.strip().lower()
+
+
+def _site(address):
+    key = _cache_key(address)
+    if key not in _sites:
+        _sites[key] = geo.lookup_site(address)
+        if len(_sites) > MAX_CACHED_SITES:
+            _sites.popitem(last=False)
+    return _sites[key]
+
+
+def _lookup(address, project_details=None):
+    """Map facts for the address plus every program evaluated for this project."""
+    site = _site(address)
+    city = site["city"]
+    details = project.parse(project_details)
+    nmtc = programs.NMTC_TRACTS.get(site["site"].get("tract_geoid") or "")
+    return {
+        **{k: v for k, v in site.items() if k != "city"},
+        "city": {k: city.get(k) for k in ("id", "name", "last_reviewed", "local_context", "market")},
+        "programs": programs.match(site, details),
+        "project": details,
+        "tract_stats": {"poverty_rate": nmtc["poverty_rate"]} if nmtc else None,
+        "zones": programs.zone_chips(site),
+        "neighborhood": ", ".join(cities.display_name(n) for n in site["districts"].get("neighborhood", [])),
+    }
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -102,15 +119,26 @@ class Handler(BaseHTTPRequestHandler):
         if url.path == "/api/lookup":
             if not address:
                 return self._send_json(400, {"error": "Enter an address."})
-            if not _allow("lookup", self._client()):
+            # Only new addresses count toward the limit; re-checking a cached site with new project answers is free.
+            if _cache_key(address) not in _sites and not _allow("lookup", self._client()):
                 return self._send_json(429, {"error": "Too many lookups. Please wait a minute and try again."})
             try:
-                return self._send_json(200, _lookup(address))
+                raw_project = json.loads((query.get("project") or ["{}"])[0])
+            except json.JSONDecodeError:
+                raw_project = {}
+            try:
+                return self._send_json(200, _lookup(address, raw_project))
             except geo.LookupError_ as e:
                 return self._send_json(404, {"error": str(e)})
             except Exception as e:
                 sys.stderr.write(f"lookup failed: {e!r}\n")
                 return self._send_json(502, {"error": "The lookup failed. A map service may be down; try again shortly."})
+
+        if url.path == "/api/suggest":
+            if not _allow("suggest", self._client()):
+                return self._send_json(429, {"suggestions": []})
+            text = (query.get("q") or [""])[0]
+            return self._send_json(200, {"suggestions": geo.suggest(text)})
 
         if url.path == "/api/status":
             return self._send_json(200, {"chat_enabled": chat.enabled()})
@@ -128,7 +156,7 @@ class Handler(BaseHTTPRequestHandler):
         try:
             body = json.loads(self.rfile.read(length) or b"{}")
             address = str(body.get("address") or "").strip()
-            lookup = _lookup(address) if address else None
+            lookup = _lookup(address, body.get("project")) if address else None
             return self._send_json(200, chat.ask(lookup, body.get("messages") or []))
         except chat.ChatError as e:
             return self._send_json(503, {"error": str(e)})

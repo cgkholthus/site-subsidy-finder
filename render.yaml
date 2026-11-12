@@ -14,5 +14,3 @@ services:
         value: 3.12.7
       - key: GEMINI_API_KEY
         sync: false   # entered by hand in the Render dashboard; never committed
-      - key: CENSUS_API_KEY
-        sync: false

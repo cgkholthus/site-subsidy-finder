@@ -15,7 +15,11 @@
         <p>Enter a development site in <strong>New Orleans, LA</strong> or <strong>Portland, OR</strong> to see the tax credits, grants, loans and requirements that apply at the federal, state, local and neighborhood level.</p>
       </div>
       <form id="search" class="search" autocomplete="off">
-        <input id="address" name="address" type="text" placeholder="e.g. 1300 Perdido St, New Orleans, LA 70112" required>
+        <div class="address-wrap">
+          <input id="address" name="address" type="text" placeholder="e.g. 1300 Perdido St, New Orleans, LA 70112" required
+            role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="address-suggestions">
+          <ul id="address-suggestions" class="suggestions" role="listbox" hidden></ul>
+        </div>
         <button type="submit">Look up site</button>
       </form>
       <p class="examples">Try: <a href="?address=1300%20Perdido%20St%2C%20New%20Orleans%2C%20LA%2070112">1300 Perdido St, New Orleans</a> · <a href="?address=920%20SW%203rd%20Ave%2C%20Portland%2C%20OR%2097204">920 SW 3rd Ave, Portland</a></p>
@@ -28,7 +32,9 @@
       <div class="site-info">
         <h2 id="site-address"></h2>
         <dl id="site-facts" class="facts"></dl>
+        <p class="flags-hint">Click a zone to see what it means.</p>
         <div id="flags" class="flags"></div>
+        <div id="zone-detail" class="zone-detail" hidden></div>
         <div class="actions">
           <button id="export" type="button" class="secondary">Download CSV</button>
         </div>
@@ -37,6 +43,46 @@
     </section>
 
     <section id="city-context" class="city-context"></section>
+
+    <section class="project" aria-labelledby="project-title">
+      <div class="project-head">
+        <h3 id="project-title">About your project <span class="optional">(optional)</span></h3>
+        <button id="project-clear" type="button" class="secondary">Clear answers</button>
+      </div>
+      <p class="project-help">Answer what you know. Each answer lets the site check more of each program's published requirements, marking programs "Matches key requirements" or "Not eligible here"; anything you leave blank stays "Check requirements".</p>
+      <form id="project-form" class="project-form" autocomplete="off">
+        <label>Rental or homeownership
+          <select name="tenure"><option value="">Not sure</option><option value="rental">Rental</option><option value="ownership">Homeownership</option></select>
+        </label>
+        <label>New building or renovation
+          <select name="construction"><option value="">Not sure</option><option value="new">New construction</option><option value="rehab">Renovating an existing building</option></select>
+        </label>
+        <label>Number of units
+          <input name="units" type="number" min="1" max="10000" inputmode="numeric" placeholder="e.g. 60">
+        </label>
+        <label>Highest income limit for the affordable units
+          <select name="ami"><option value="">Not sure</option><option value="30">30% of area median income</option><option value="50">50% of AMI</option><option value="60">60% of AMI</option><option value="80">80% of AMI</option><option value="120">120% of AMI</option></select>
+        </label>
+        <label>Owner
+          <select name="owner"><option value="">Not sure</option><option value="nonprofit">Nonprofit</option><option value="forprofit">For-profit</option></select>
+        </label>
+        <label>Commercial or community space
+          <select name="commercial"><option value="">Not sure</option><option value="yes">Yes, some</option><option value="no">No, housing only</option></select>
+        </label>
+        <fieldset>
+          <legend>Units set aside for</legend>
+          <label class="check"><input type="checkbox" name="populations" value="seniors"> Seniors</label>
+          <label class="check"><input type="checkbox" name="populations" value="disability"> People with disabilities</label>
+          <label class="check"><input type="checkbox" name="populations" value="homeless"> People experiencing homelessness</label>
+          <label class="check"><input type="checkbox" name="populations" value="none"> None of these</label>
+        </fieldset>
+      </form>
+    </section>
+
+    <p class="stack-link"><a id="stack-link" href="/stack.html">Estimate a capital stack for this site →</a></p>
+
+    <h2 class="results-heading">Potentially relevant programs</h2>
+    <p class="results-note">Location alone doesn't establish eligibility. "Potentially relevant" means the site's location fits; "Matches key requirements" means your project answers also fit the published rules. The administering agency makes the final decision, so contact it before relying on a program.</p>
 
     <nav class="tabs" role="tablist">
       <button role="tab" data-level="federal" aria-selected="true">Federal <span class="count"></span></button>

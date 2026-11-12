@@ -2,32 +2,64 @@
   "id": "new_orleans",
   "name": "New Orleans, LA",
   "place_geoid": "2255000",
-  "last_reviewed": "2026-10-25",
+  "last_reviewed": "2026-11-11",
   "local_context": "New Orleans (Orleans Parish) layers state tax credits from the Louisiana Housing Corporation with city gap funds, Finance New Orleans bonds and PILOTs, and HANO project-based vouchers. Location matters a lot here: historic, cultural and downtown districts unlock the state historic credit and the Restoration Tax Abatement, while inclusionary zoning applies only in certain sub-districts. City gap funding has been tight since 2025, and the inclusionary mandate is under review after a November 2025 study recommended ending it.",
   "districts": {
     "miz": {
       "label": "Mandatory Inclusionary Zoning sub-district",
       "url": "https://maps.nola.gov/server/rest/services/EconomicDevelopment/TaxIncentives/MapServer/12",
       "field": "Name",
-      "display": "the {name} of the Mandatory Inclusionary Zoning overlay"
+      "display": "the {name} of the Mandatory Inclusionary Zoning overlay",
+      "about": {
+        "title": "Mandatory Inclusionary Zoning (MIZ)",
+        "text": "A zoning overlay where new rental buildings with 10 or more units must include affordable units, kept affordable for 99 years at 60% of area median income: 10% of units in the Core sub-district (Central Business District and French Quarter) and 5% in the Strong sub-districts. Developers can pay a fee in lieu instead.",
+        "meaning": "A market-rate project here needs to budget for affordable units or the fee. A fully affordable project already meets the requirement. A November 2025 city study recommended ending the mandate, so check whether it's still in force.",
+        "url": "https://nola.gov/next/safety-and-permits/topics/zoning-administration/affordable-housing-inclusionary-zoning/"
+      }
     },
     "local_historic": {
       "label": "local historic district (HDLC)",
       "url": "https://maps.nola.gov/server/rest/services/EconomicDevelopment/TaxIncentives/MapServer/1",
       "field": "NAME",
-      "display": "the {name} local historic district"
+      "display": "the {name} local historic district",
+      "about": {
+        "title": "Local historic district",
+        "text": "A city-designated historic district. Exterior changes, demolitions and new construction need approval from the Historic District Landmarks Commission, or the Vieux Carré Commission in the French Quarter.",
+        "meaning": "Plan extra time for design review. Being in a historic district also counts toward the Restoration Tax Abatement.",
+        "url": "https://nola.gov/hdlc/"
+      },
+      "names": {
+        "Vieux Carré": {
+          "title": "Vieux Carré (French Quarter) historic district",
+          "text": "The French Quarter's local historic district. The Vieux Carré Commission reviews exterior work, demolitions and new construction.",
+          "meaning": "Expect detailed design review. The location counts toward the Restoration Tax Abatement.",
+          "url": "https://nola.gov/next/vieux-carre-commission/"
+        }
+      }
     },
     "national_register": {
       "label": "National Register historic district",
       "url": "https://maps.nola.gov/server/rest/services/EconomicDevelopment/TaxIncentives/MapServer/2",
       "field": "NAME",
-      "display": "the {name} (National Register)"
+      "display": "the {name} (National Register)",
+      "about": {
+        "title": "National Register historic district",
+        "text": "An area listed by the National Park Service as historically significant. Listing doesn't restrict what private owners do with their buildings.",
+        "meaning": "Renovating a contributing building can qualify for the 20% federal and 25% Louisiana historic rehabilitation tax credits, which can be combined with LIHTC.",
+        "url": "https://www.nps.gov/subjects/nationalregister/index.htm"
+      }
     },
     "cultural": {
       "label": "state cultural district",
       "url": "https://maps.nola.gov/server/rest/services/EconomicDevelopment/TaxIncentives/MapServer/6",
       "field": "Name",
-      "display": "the {name} cultural district"
+      "display": "the {name} cultural district",
+      "about": {
+        "title": "Louisiana Cultural District",
+        "text": "A state-designated arts and culture district (created by Act 298 of 2007). The sales tax break on original art sold in these districts ended January 1, 2025.",
+        "meaning": "Renovating a historic building (over 50 years old) here can qualify for the 25% Louisiana historic rehabilitation credit even if it isn't on the National Register.",
+        "url": "https://www.crt.louisiana.gov/cultural-development/arts/cultural-districts/"
+      }
     },
     "special": {
       "label": "special or economic development district",
@@ -37,13 +69,62 @@
       "ignore": [
         "Opportunity Zone",
         "New Market Tax Credit"
+      ],
+      "about": {
+        "title": "Special taxing or improvement district",
+        "text": "A district created under Louisiana law that usually adds a small tax or fee inside its boundary to pay for extra services, such as security, cleaning or economic development.",
+        "meaning": "It can add to a building's annual operating costs. Some types also make a site eligible for incentives such as the Restoration Tax Abatement.",
+        "url": "https://legis.la.gov/Legis/Law.aspx?d=91648"
+      },
+      "names": {
+        "Downtown Development District": {
+          "title": "Downtown Development District (DDD)",
+          "text": "Created by the Legislature in 1974 as the country's first assessment-based business improvement district. Downtown owners pay an extra property tax (13.73 mills in 2025) for enhanced cleaning, 24-hour security, homeless outreach and economic development.",
+          "meaning": "Adds a modest amount to property taxes, but a downtown development district location qualifies for the 25% Louisiana historic credit and the Restoration Tax Abatement.",
+          "url": "https://downtownnola.com/"
+        },
+        "BioDistrict": {
+          "title": "BioDistrict New Orleans",
+          "text": "A state-created political subdivision (R.S. 33:9039.61) meant to grow the biosciences and medical economy around the downtown medical center. A 15-member board governs it, and it has taxing and bonding authority. A 2022 law (Act 354) took away its power to expropriate property and requires a PILOT agreement with the city before it buys property.",
+          "meaning": "It doesn't offer housing subsidies itself. Large projects may want to coordinate with the district's plans.",
+          "url": "https://nola.gov/next/government/boards/browse/biodistrict-new-orleans/"
+        }
+      },
+      "patterns": [
+        {
+          "contains": "Economic Development District",
+          "title": "Economic development district",
+          "text": "A Louisiana economic development district can levy up to 2% in extra sales or hotel taxes inside its boundary, often to repay financing for a specific development (R.S. 33:9038.39).",
+          "meaning": "Customers of commercial space may pay a slightly higher sales tax. The location counts as an economic development district for the Restoration Tax Abatement.",
+          "url": "https://legis.la.gov/Legis/Law.aspx?d=91648"
+        },
+        {
+          "contains": "Improvement District",
+          "title": "Neighborhood improvement or security district",
+          "text": "Property owners pay an annual parcel fee, set by voters for terms of up to five years (often $100 to $600 per parcel), for extra patrols or beautification.",
+          "meaning": "Add the parcel fee to the operating budget.",
+          "url": "https://legis.la.gov/Legis/Law.aspx?d=727569"
+        },
+        {
+          "contains": "Security",
+          "title": "Neighborhood security district",
+          "text": "Property owners pay an annual parcel fee, set by voters for terms of up to five years, for extra patrols.",
+          "meaning": "Add the parcel fee to the operating budget.",
+          "url": "https://legis.la.gov/Legis/Law.aspx?d=727569"
+        }
       ]
     },
     "tif": {
       "label": "TIF district",
       "url": "https://maps.nola.gov/server/rest/services/EconomicDevelopment/TaxIncentives/MapServer/5",
       "field": "TIF_Title",
-      "display": "the {name} TIF district"
+      "display": "the {name} TIF district",
+      "about": {
+        "title": "Tax increment financing (TIF) district",
+        "text": "Growth in sales or property taxes inside the boundary is set aside to repay the costs of a specific development. New Orleans' TIF districts are mostly tied to individual projects.",
+        "meaning": "A new project would need to negotiate with the district to share in any increment.",
+        "url": "https://nola.gov/next/economic-development/"
+      }
     },
     "neighborhood": {
       "label": "neighborhood",
@@ -64,7 +145,20 @@
       "eligibility": "Competitive (9%) or bond-financed (4%). Read the current QAP for set-asides, scoring and cost limits.",
       "deadline": "Set by the QAP round; no 2026-specific round confirmed as of October 2026.",
       "url": "https://www.lhc.la.gov",
-      "area": null
+      "area": null,
+      "project_rules": [
+        {
+          "field": "tenure",
+          "is": "rental",
+          "fail": "This program funds rental housing only."
+        },
+        {
+          "field": "ami",
+          "max": 60,
+          "fail": "LIHTC units must be restricted to 60% AMI or below (or average 60% under income averaging)."
+        }
+      ],
+      "contact": "lhc"
     },
     {
       "id": "la_home_htf_gap",
@@ -77,7 +171,21 @@
       "eligibility": "Only for projects with an existing LIHTC award. The program description found is undated, so confirm it is still open with LHC.",
       "deadline": "Rolling until funds are exhausted",
       "url": "https://www.lhc.la.gov/hubfs/Document%20Libraries/Housing%20Development/Developer%20Assistance%20Plan%20Description%20as%20of%209072022.docx",
-      "area": null
+      "area": null,
+      "project_rules": [
+        {
+          "field": "tenure",
+          "is": "rental",
+          "fail": "This program funds rental housing only."
+        },
+        {
+          "field": "ami",
+          "max": 60,
+          "fail": "This gap money is for LIHTC projects, which serve 60% AMI or below."
+        }
+      ],
+      "best_status": "check",
+      "contact": "lhc"
     },
     {
       "id": "la_historic_credit",
@@ -85,13 +193,16 @@
       "level": "state",
       "type": "Tax credit",
       "agency": "Louisiana Division of Historic Preservation (Office of Cultural Development)",
-      "summary": "State income and franchise tax credit for rehabilitating historic income-producing buildings, including residential rentals. Act 426 of 2023 raised the rate to 25% of eligible costs (35% in rural areas, which excludes New Orleans) and added buildings listed on, or contributing to, the National Register. Stacks with the 20% federal historic credit.",
-      "amount": "25% of eligible rehabilitation costs incurred after January 1, 2023",
-      "eligibility": "The building must be historic (National Register listed or contributing), or located in a Downtown Development District or a state cultural district. The program sunsets December 31, 2028.",
-      "deadline": "Rolling; reservations through the Division of Historic Preservation",
+      "summary": "State income and franchise tax credit for rehabilitating historic income-producing buildings, including residential rentals. The credit is 25% of eligible rehabilitation costs (35% in rural areas, which excludes New Orleans). It stacks with the 20% federal historic credit and can be combined with LIHTC.",
+      "amount": "25% of eligible rehabilitation costs incurred January 1, 2023 through December 31, 2028",
+      "eligibility": "The building must be individually listed on, or contributing to a district on, the National Register, or be in a Downtown Development District or a state cultural district. Only costs incurred before January 1, 2029 qualify (the program sunsets December 31, 2028).",
+      "deadline": "Rolling reservations through the Division of Historic Preservation, subject to the $85 million annual cap",
       "url": "https://www.crt.louisiana.gov/cultural-development/historic-preservation/tax-incentives/",
       "area": {
         "any": [
+          {
+            "flag": "nr_listed"
+          },
           {
             "district": "national_register"
           },
@@ -106,8 +217,32 @@
           }
         ],
         "outside_status": "check",
-        "outside_note": "Site is not in a National Register district, cultural district or the Downtown Development District. It can still qualify if the building itself is individually listed on the National Register."
-      }
+        "outside_note": "Site is not in a National Register district, cultural district or the Downtown Development District, and the building at this address isn't individually listed. It could still qualify if the building is eligible for listing."
+      },
+      "project_rules": [
+        {
+          "field": "construction",
+          "is": "rehab",
+          "fail": "Only for renovating an existing building."
+        },
+        {
+          "field": "tenure",
+          "is": "rental",
+          "fail": "The commercial historic credit covers income-producing buildings such as rentals."
+        }
+      ],
+      "contact": "la_dhp",
+      "references": [
+        {
+          "title": "Louisiana R.S. 47:6019 (historic rehabilitation credit statute)",
+          "url": "https://legis.la.gov/Legis/Law.aspx?d=102376"
+        },
+        {
+          "title": "Louisiana Department of Revenue: changes to the historic structures rehabilitation credit",
+          "url": "https://revenue.louisiana.gov/tax-education-and-faqs/faqs/tax-reform-credits/what-changes-were-made-to-the-historic-structures-rehabilitation-tax-credit/"
+        }
+      ],
+      "limits": "Statewide reservations are capped at $85 million a year (Part 2 applications received on or after January 1, 2025), and no taxpayer, with affiliates, may claim more than $5 million a year for structures in any one downtown development or cultural district."
     },
     {
       "id": "nola_rta",
@@ -139,7 +274,15 @@
             "flag": "opportunity_zone"
           }
         ]
-      }
+      },
+      "project_rules": [
+        {
+          "field": "construction",
+          "is": "rehab",
+          "fail": "Only for renovating an existing building."
+        }
+      ],
+      "contact": "nola_oed"
     },
     {
       "id": "nola_gap",
@@ -152,7 +295,19 @@
       "eligibility": "Affordable rental units for income-qualified households; terms set by each NOFA.",
       "deadline": "No 2026 new-construction round found as of October 2026; watch the City's funding page.",
       "url": "https://nola.gov/next/community-development/",
-      "area": null
+      "area": null,
+      "project_rules": [
+        {
+          "field": "ami",
+          "max": 80,
+          "fail": "City affordable housing funds serve households at or below 80% AMI."
+        }
+      ],
+      "funding": {
+        "status": "closed",
+        "note": "No 2026 new-construction funding round found as of October 2026."
+      },
+      "contact": "nola_ocd"
     },
     {
       "id": "nola_fano",
@@ -165,7 +320,20 @@
       "eligibility": "Affordable or mixed-income multifamily projects; terms negotiated per deal.",
       "deadline": "Rolling",
       "url": "https://www.lhc.la.gov/press-releases/new-orleans-partnership",
-      "area": null
+      "area": null,
+      "project_rules": [
+        {
+          "field": "tenure",
+          "is": "rental",
+          "fail": "This program funds rental housing only."
+        },
+        {
+          "field": "units",
+          "min": 5,
+          "fail": "Finance New Orleans multifamily bonds are for multifamily projects (5+ units)."
+        }
+      ],
+      "contact": "fno"
     },
     {
       "id": "nola_pilot",
@@ -178,7 +346,24 @@
       "eligibility": "Case by case. In April 2026 the Council President asked the IDB to pause new PILOT approvals pending a citywide economic development plan, so check current status before counting on one.",
       "deadline": "Rolling, subject to IDB and Council approval",
       "url": "https://nola.gov/next/economic-development/topics/industrial-development-board/",
-      "area": null
+      "area": null,
+      "project_rules": [
+        {
+          "field": "tenure",
+          "is": "rental",
+          "fail": "This program funds rental housing only."
+        },
+        {
+          "field": "ami",
+          "max": 120,
+          "fail": "PILOTs are tied to affordable (60% AMI) or workforce (up to 120% AMI) units."
+        }
+      ],
+      "funding": {
+        "status": "paused",
+        "note": "In April 2026 the Council President asked the Industrial Development Board to pause new PILOT approvals."
+      },
+      "contact": "nola_idb"
     },
     {
       "id": "nola_hano_pbv",
@@ -191,7 +376,20 @@
       "eligibility": "New construction or substantial rehab with at least 10 PBV units. General vouchers are capped at 25% of units or 120 units, whichever is less.",
       "deadline": "Check hano.org for the current solicitation; a 2026 date was not confirmed.",
       "url": "https://www.hano.org",
-      "area": null
+      "area": null,
+      "project_rules": [
+        {
+          "field": "tenure",
+          "is": "rental",
+          "fail": "This program funds rental housing only."
+        },
+        {
+          "field": "units",
+          "min": 10,
+          "fail": "HANO requires at least 10 project-based voucher units."
+        }
+      ],
+      "contact": "hano"
     },
     {
       "id": "nola_nora",
@@ -204,7 +402,24 @@
       "eligibility": "Mostly homeownership. Builds must meet Energy Star, FORTIFIED and NORA resilience standards; auction buyers must finish within 18 months.",
       "deadline": "2026 NOHIP round closed; watch NORA for the next round and auctions",
       "url": "https://www.noraworks.org",
-      "area": null
+      "area": null,
+      "project_rules": [
+        {
+          "field": "tenure",
+          "is": "ownership",
+          "fail": "This program funds homeownership, not rentals."
+        },
+        {
+          "field": "ami",
+          "max": 80,
+          "fail": "NOHIP homes are for households at or below 80% AMI."
+        }
+      ],
+      "funding": {
+        "status": "closed",
+        "note": "The 2026 NOHIP round closed August 6, 2026."
+      },
+      "contact": "nora"
     },
     {
       "id": "nola_miz",
@@ -220,7 +435,25 @@
       "url": "https://nola.gov/next/safety-and-permits/topics/zoning-administration/affordable-housing-inclusionary-zoning/",
       "area": {
         "district": "miz"
-      }
+      },
+      "project_rules": [
+        {
+          "field": "tenure",
+          "is": "rental",
+          "fail": "This program funds rental housing only."
+        },
+        {
+          "field": "construction",
+          "is": "new",
+          "fail": "Only applies to new construction."
+        },
+        {
+          "field": "units",
+          "min": 10,
+          "fail": "Mandatory inclusionary zoning only applies to projects with 10 or more units."
+        }
+      ],
+      "contact": "nola_iz"
     },
     {
       "id": "nola_tif",
@@ -235,7 +468,8 @@
       "url": "https://nola.gov/next/economic-development/",
       "area": {
         "district": "tif"
-      }
+      },
+      "contact": "nola_oed"
     },
     {
       "id": "nola_hdlc",
@@ -251,7 +485,133 @@
       "url": "https://nola.gov/hdlc/",
       "area": {
         "district": "local_historic"
-      }
+      },
+      "contact": "hdlc"
     }
-  ]
+  ],
+  "federal_facts": {
+    "home": {
+      "location": "yes",
+      "note": "The City of New Orleans is a HOME participating jurisdiction and receives HOME funds directly from HUD."
+    },
+    "cdbg": {
+      "location": "yes",
+      "note": "The City of New Orleans is a CDBG entitlement community; it awards CDBG through its own NOFAs."
+    }
+  },
+  "national_register_districts": [
+    "national_register"
+  ],
+  "market": {
+    "as_of": "November 2026",
+    "cost_per_unit": {
+      "value": 400000,
+      "note": "Recent New Orleans LIHTC deals: Canal Crossing Senior (about $385k/unit) and Esplanade Delille (about $394k/unit) in LHC's 2026 programs report.",
+      "url": "https://webapps3.lhc.la.gov/documents/BoardCommitteeMaterials/2026/March/BODM/LHC%20Programs%20Report.pdf"
+    },
+    "rent": {
+      "value": 1100,
+      "note": "HUD FY2026: 60% AMI 2-bedroom max rent is $1,197/month (60% limit $47,880 for 3 people), less about $100 for utilities.",
+      "url": "https://www.huduser.gov/datasets/il/il2026/summary-mtsp?year=2026&reporttype_mtsp=hmfa&states=22&counties=2207199999&hmfa=METRO35380M35380"
+    },
+    "opex": {
+      "value": 8000,
+      "note": "Estimate; no official local benchmark found. Insurance is high here: Gulf Coast affordable properties averaged $1,205/unit in 2023.",
+      "url": "https://enterprisecommunity.org/sites/default/files/2024-10/Gulf-Coast-Insurance-Brief.pdf"
+    },
+    "dscr": {
+      "value": 1.2,
+      "note": "Louisiana Housing Corporation underwriting keeps debt coverage between 1.15 and 1.40.",
+      "url": "https://www.lhc.la.gov/hubfs/Document%20Libraries/Housing%20Development/Funding%20Opportunities/LIHTC/2025%20QAP%20Final%20as%20of%2002.14.25.pdf"
+    },
+    "lihtc_price": {
+      "value": 0.83,
+      "note": "2026 national LIHTC pricing: Novogradac Q1 2026 medians $0.80-$0.89; mid-2026 survey average 82.7 cents.",
+      "url": "https://www.bisnow.com/national/news/affordable-housing/affordable-housing-gaps-funding-lihtc-134169"
+    }
+  },
+  "state_name": "Louisiana",
+  "agencies": {
+    "lhc": {
+      "name": "Louisiana Housing Corporation",
+      "phone": "(225) 763-8700",
+      "email": "publicaffairs@lhc.la.gov",
+      "url": "https://www.lhc.la.gov"
+    },
+    "nola_ocd": {
+      "name": "City of New Orleans Office of Community Development",
+      "phone": "(504) 658-4200",
+      "url": "https://nola.gov/next/community-development/"
+    },
+    "nola_oed": {
+      "name": "City of New Orleans Office of Economic Development (incentives program manager)",
+      "phone": "(504) 658-4955",
+      "url": "https://nola.gov/next/economic-development/programs/restoration-tax-abatement-(rta)-program/"
+    },
+    "nola_idb": {
+      "name": "Industrial Development Board (City of New Orleans)",
+      "phone": "(504) 658-4000",
+      "url": "https://nola.gov/next/economic-development/topics/industrial-development-board/"
+    },
+    "fno": {
+      "name": "Finance New Orleans",
+      "phone": "(504) 524-5533",
+      "url": "https://www.financenola.org/"
+    },
+    "hano": {
+      "name": "Housing Authority of New Orleans (HANO)",
+      "phone": "(504) 670-3300",
+      "url": "https://www.hano.org"
+    },
+    "nora": {
+      "name": "New Orleans Redevelopment Authority (NORA)",
+      "phone": "(504) 658-4400",
+      "url": "https://www.noraworks.org"
+    },
+    "la_dhp": {
+      "name": "Louisiana Division of Historic Preservation, Tax Incentives",
+      "phone": "(225) 342-8200",
+      "url": "https://www.crt.louisiana.gov/cultural-development/historic-preservation/tax-incentives/"
+    },
+    "nola_iz": {
+      "name": "City of New Orleans Inclusionary Zoning office",
+      "email": "IZoffice@nola.gov",
+      "url": "https://nola.gov/next/safety-and-permits/topics/zoning-administration/affordable-housing-inclusionary-zoning/"
+    },
+    "hdlc": {
+      "name": "Historic District Landmarks Commission (Vieux Carré Commission in the French Quarter: (504) 658-1429)",
+      "phone": "(504) 658-7051",
+      "url": "https://nola.gov/hdlc/"
+    },
+    "cdfi": {
+      "name": "CDFI Fund Help Desk (U.S. Treasury)",
+      "phone": "(202) 653-0421",
+      "email": "cdfihelp@cdfi.treas.gov",
+      "url": "https://www.cdfifund.gov/contact"
+    },
+    "fhlb": {
+      "name": "FHLBank Dallas (serves Louisiana)",
+      "phone": "(214) 441-8500",
+      "url": "https://www.fhlb.com/"
+    },
+    "hud_mf": {
+      "name": "HUD Office of Multifamily Housing",
+      "phone": "(202) 708-1112",
+      "url": "https://www.hud.gov/program_offices/housing/mfh/progdesc/rentcoophsg221d3n4"
+    }
+  },
+  "federal_contacts": {
+    "lihtc9": "lhc",
+    "lihtc4": "lhc",
+    "htf": "lhc",
+    "s811": "lhc",
+    "home": "nola_ocd",
+    "cdbg": "nola_ocd",
+    "nmtc": "cdfi",
+    "cmf": "cdfi",
+    "htc": "la_dhp",
+    "fha221d4": "hud_mf",
+    "s202": "hud_mf",
+    "fhlb_ahp": "fhlb"
+  }
 }

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Capital Stack Estimate</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <p class="back"><a id="back-link" href="/">← Back to site results</a></p>
+      <div class="brand">
+        <h1>Capital stack estimate</h1>
+        <p id="stack-site">Combines the potentially relevant programs for this site into a rough sources-and-uses estimate.</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="disclaimer-box" role="note">
+      <strong>Estimate only. This is not advice.</strong>
+      This page is a student prototype for learning and early planning. It uses simplified formulas and assumptions you can change below.
+      It is not financial, investment, legal or tax advice, and it is not an offer or commitment of funding.
+      Real amounts depend on agency rules, competition, underwriting and market pricing. Confirm everything with the funding agencies,
+      a tax credit syndicator or lender, an attorney and a CPA before relying on it.
+    </section>
+
+    <p id="stack-error" class="error" hidden></p>
+    <p id="stack-loading" class="muted">Loading the site and programs… (the first lookup for an address can take several seconds)</p>
+
+    <section class="stack-layout" id="stack" hidden>
+      <div class="assumptions">
+        <h2>Assumptions</h2>
+        <p class="muted">Starts with recommended numbers for this city. Type your own rough numbers and the estimate updates as you go.</p>
+        <form id="assumptions" autocomplete="off"></form>
+      </div>
+
+      <div class="scenarios">
+        <div class="export-bar">
+          <button type="button" id="download-proforma">Download pro forma (CSV)</button>
+          <span class="muted">Assumptions, sources and uses, and a 15-year cash flow. Opens in Excel or Google Sheets.</span>
+        </div>
+        <div id="scenarios"></div>
+        <section class="notes">
+          <h3>How programs were combined</h3>
+          <ul id="combine-notes"></ul>
+          <h3>Also helps, but not counted as a source</h3>
+          <ul id="also-helps"></ul>
+        </section>
+      </div>
+    </section>
+
+    <p class="disclaimer">Estimate for planning and learning only; not financial, legal or tax advice. Student prototype.</p>
+  </main>
+
+  <script src="/stack.js"></script>
+</body>
+</html>

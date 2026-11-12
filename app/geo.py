@@ -1,7 +1,7 @@
-"""Site lookups against free public data: Census geocoder, HUD eGIS layers, Census ACS."""
+"""Site lookups against free public data: Census geocoder, HUD eGIS layers and city GIS layers."""
 
 import json
-import os
+import re
 import urllib.parse
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
@@ -10,7 +10,6 @@ import cities
 
 CENSUS_GEOCODER = "https://geocoding.geo.census.gov/geocoder/geographies/onelineaddress"
 HUD_ARCGIS = "https://services.arcgis.com/VTyQ9soqVukalItT/arcgis/rest/services"
-ACS_URL = "https://api.census.gov/data/2023/acs/acs5"
 
 HUD_LAYERS = {
     "qct": "QUALIFIED_CENSUS_TRACTS_2026/FeatureServer/0",
@@ -20,7 +19,21 @@ HUD_LAYERS = {
     "fmr": "Fair_Market_Rents/FeatureServer/0",
 }
 LIHTC_LAYER = "LIHTC/FeatureServer/0"
+
+# Address autocomplete: each city's own official address data.
+NOLA_ADDRESSES = "https://maps.nola.gov/server/rest/services/Addresses/Site_Address_Point/MapServer/0/query"
+PDX_SUGGEST = "https://www.portlandmaps.com/arcgis/rest/services/Public/Address_Geocoding_PDX/GeocodeServer/suggest"
+MAX_SUGGESTIONS = 5
 NEARBY_RADIUS_METERS = 1609  # one mile
+
+# National Park Service's National Register points. Their locations are approximate (often +/- 12 m or more),
+# so a listing only counts when its street address matches the site's address, not just because it's nearby.
+NPS_NRHP_POINTS = "https://mapservices.nps.gov/arcgis/rest/services/cultural_resources/nrhp_locations/MapServer/0/query"
+NRHP_SEARCH_METERS = 150
+STREET_WORDS = {"SAINT": "ST", "STREET": "ST", "AVENUE": "AVE", "BOULEVARD": "BLVD", "DRIVE": "DR", "ROAD": "RD",
+                "PLACE": "PL", "COURT": "CT", "PARKWAY": "PKWY", "NORTH": "N", "SOUTH": "S", "EAST": "E", "WEST": "W",
+                "NORTHWEST": "NW", "NORTHEAST": "NE", "SOUTHWEST": "SW", "SOUTHEAST": "SE"}
+STREET_NOISE = {"ST", "AVE", "BLVD", "DR", "RD", "PL", "CT", "PKWY", "N", "S", "E", "W", "NW", "NE", "SW", "SE", "WAY", "LN", "HWY"}
 
 
 class LookupError_(Exception):
@@ -114,6 +127,62 @@ def _district_names(layer_url, field, lon, lat):
     return sorted({n for n in names if n})
 
 
+def _street_key(text):
+    """Distinctive words of a street name, e.g. "St. Charles Ave." -> ("CHARLES",), "SW 3RD AVE" -> ("3RD",)."""
+    words = [STREET_WORDS.get(w, w) for w in re.sub(r"[^A-Z0-9 ]", " ", text.upper()).split()]
+    return tuple(w for w in words if w not in STREET_NOISE)
+
+
+def _split_address(text):
+    """("920, 924-928 SW 3rd Ave.") -> ({920, 924, 925, 926, 927, 928}, street key)."""
+    m = re.match(r"^\s*([\d\s,&\-–and]+?)\s+([A-Za-z].*)$", text or "")
+    if not m:
+        return set(), ()
+    numbers = set()
+    for part in re.split(r"[,&]|\band\b", m.group(1)):
+        bounds = [int(n) for n in re.findall(r"\d+", part)]
+        if len(bounds) == 2 and 0 <= bounds[1] - bounds[0] <= 200:
+            numbers.update(range(bounds[0], bounds[1] + 1))
+        else:
+            numbers.update(bounds)
+    return numbers, _street_key(m.group(2))
+
+
+def _nrhp_listings(site):
+    """National Register listings whose address matches the site (individually listed buildings and structures)."""
+    number, street = _split_address(site["matched_address"].split(",")[0])
+    if not number or not street:
+        return []
+    data = _get_json(NPS_NRHP_POINTS, {
+        "geometry": json.dumps({"x": site["lon"], "y": site["lat"], "spatialReference": {"wkid": 4326}}),
+        "geometryType": "esriGeometryPoint",
+        "inSR": 4326,
+        "spatialRel": "esriSpatialRelIntersects",
+        "distance": NRHP_SEARCH_METERS,
+        "units": "esriSRUnit_Meter",
+        "outFields": "RESNAME,ResType,Address,NRIS_Refnum,CertDate,Is_NHL,NARA_URL,STATUS",
+        "returnGeometry": "false",
+        "f": "json",
+    }, timeout=15)
+    if "error" in data:
+        raise LookupError_(data["error"].get("message", "National Register query failed"))
+    found = []
+    for f in data.get("features", []):
+        a = f["attributes"]
+        if (a.get("ResType") or "").lower() == "district" or (a.get("STATUS") or "Listed") != "Listed":
+            continue
+        numbers, key = _split_address(a.get("Address") or "")
+        if number & numbers and key == street:
+            found.append({
+                "name": a.get("RESNAME"),
+                "reference_number": a.get("NRIS_Refnum"),
+                "listed": (a.get("CertDate") or "")[:4] or None,
+                "national_historic_landmark": (a.get("Is_NHL") or "").strip().upper() == "X",
+                "record_url": a.get("NARA_URL"),
+            })
+    return found
+
+
 def _nearby_lihtc(lon, lat):
     params = {
         "geometry": json.dumps({"x": lon, "y": lat, "spatialReference": {"wkid": 4326}}),
@@ -152,28 +221,6 @@ def _nearby_lihtc(lon, lat):
     return out
 
 
-def _acs_tract_stats(state_fips, county_fips, tract_code):
-    """Poverty rate and median family income for NMTC screening. Needs CENSUS_API_KEY."""
-    key = os.environ.get("CENSUS_API_KEY")
-    if not key:
-        return None
-    rows = _get_json(ACS_URL, {
-        "get": "B17001_001E,B17001_002E,B19113_001E,B01003_001E",
-        "for": f"tract:{tract_code}",
-        "in": f"state:{state_fips} county:{county_fips}",
-        "key": key,
-    })
-    header, values = rows[0], rows[1]
-    r = dict(zip(header, values))
-    total, below = float(r["B17001_001E"] or 0), float(r["B17001_002E"] or 0)
-    mfi = float(r["B19113_001E"]) if r["B19113_001E"] not in (None, "", "-666666666") else None
-    return {
-        "population": int(float(r["B01003_001E"] or 0)),
-        "poverty_rate": round(below / total * 100, 1) if total else None,
-        "median_family_income": mfi if mfi and mfi > 0 else None,
-    }
-
-
 def lookup_site(address):
     site = geocode(address)
     city = cities.city_for(site)
@@ -184,10 +231,9 @@ def lookup_site(address):
 
     jobs = {name: (_point_query, (layer, lon, lat)) for name, layer in HUD_LAYERS.items()}
     jobs["nearby_lihtc"] = (_nearby_lihtc, (lon, lat))
+    jobs["nrhp"] = (_nrhp_listings, (site,))
     for key, url, field in cities.district_jobs(city):
         jobs["district:" + key] = (_district_names, (url, field, lon, lat))
-    if site["tract_code"]:
-        jobs["acs"] = (_acs_tract_stats, (site["state_fips"], site["county_fips"], site["tract_code"]))
 
     results, errors = {}, {}
     with ThreadPoolExecutor(max_workers=len(jobs)) as pool:
@@ -209,6 +255,8 @@ def lookup_site(address):
         "opportunity_zone": bool(oz_rows) if "opportunity_zone" in results else None,
         "promise_zone": pz_rows[0].get("COMMUNITY") if pz_rows else None,
         "rural": site["urban_area"] is None,
+        # Name of the individually listed National Register building at this address, if any.
+        "nr_listed": (results.get("nrhp") or [{}])[0].get("name"),
     }
     fmr = None
     if fmr_rows:
@@ -225,7 +273,62 @@ def lookup_site(address):
         "districts": districts,
         "flags": flags,
         "fair_market_rents": fmr,
-        "tract_stats": results.get("acs"),
         "nearby_lihtc": results.get("nearby_lihtc", []),
+        "nr_listings": results.get("nrhp", []),
         "errors": errors,
     }
+
+
+def _clean_query(text):
+    """Keep letters, digits and a few address characters; anything else could break a map query."""
+    return re.sub(r"[^A-Za-z0-9 #.,'-]", "", text).strip()[:80]
+
+
+def _nola_suggest(text):
+    street = re.split(r",", text)[0].strip().upper().replace("'", "''")
+    if not re.match(r"^\d", street):
+        return []
+    variants = [street]
+    if re.search(r"\bST\b", street):  # "St Claude" is stored as "Saint Claude"
+        variants.append(re.sub(r"\bST\b(?=\s+[A-Z])", "SAINT", street, count=1))
+    where = " OR ".join(f"UPPER(FULLADDR) LIKE '{v}%'" for v in variants)
+    data = _get_json(NOLA_ADDRESSES, {
+        "where": f"({where}) AND UNITID IS NULL AND STATUS = 'Current'",
+        "outFields": "FULLADDR",
+        "returnGeometry": "false",
+        "returnDistinctValues": "true",
+        "orderByFields": "FULLADDR",
+        "resultRecordCount": MAX_SUGGESTIONS,
+        "f": "json",
+    }, timeout=8)
+    return [f"{f['attributes']['FULLADDR']}, New Orleans, LA" for f in data.get("features", [])]
+
+
+def _pdx_suggest(text):
+    if not re.match(r"^\d", text):
+        return []
+    data = _get_json(PDX_SUGGEST, {"text": text, "maxSuggestions": MAX_SUGGESTIONS, "f": "json"}, timeout=8)
+    # The service also covers suburbs (West Linn, Gresham...); only Portland addresses are supported here.
+    return [s["text"] for s in data.get("suggestions", [])
+            if not s.get("isCollection") and ", portland, or" in s["text"].lower()]
+
+
+def suggest(text):
+    """Address suggestions from New Orleans and Portland as the user types (needs a house number first)."""
+    text = _clean_query(text)
+    if len(text) < 4 or not re.match(r"^\d+\s+\S", text):
+        return []
+    lower = text.lower()
+    sources = []
+    if "portland" not in lower and " or" not in lower:
+        sources.append(_nola_suggest)
+    if "new orleans" not in lower and " la" not in lower:
+        sources.append(_pdx_suggest)
+    results = []
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        for fut in [pool.submit(fn, text) for fn in sources]:
+            try:
+                results.extend(fut.result())
+            except Exception:
+                pass  # one city's service being slow or down shouldn't block the other
+    return results[: MAX_SUGGESTIONS * 2]
