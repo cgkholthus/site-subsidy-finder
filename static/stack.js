@@ -621,4 +621,22 @@ async function load() {
   $("#stack").hidden = false;
 }
 
+// The chatbot (chat.js, shared with the results page) asks about this page's site and project answers.
+window.siteChatContext = () => {
+  const params = new URLSearchParams(location.search);
+  let project = {};
+  try {
+    project = JSON.parse(params.get("project") || "{}") || {};
+  } catch {
+    project = {};
+  }
+  return {
+    page: "stack",
+    address: params.get("address") || "",
+    project,
+    matchedAddress: state.lookup && state.lookup.site.matched_address,
+    stackHref: location.href,
+  };
+};
+
 load();
