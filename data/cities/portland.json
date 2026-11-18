@@ -2,7 +2,7 @@
   "id": "portland",
   "name": "Portland, OR",
   "place_geoid": "4159000",
-  "last_reviewed": "2026-11-11",
+  "last_reviewed": "2026-11-17",
   "local_context": "Portland projects usually combine state funds through Oregon's centralized application (ORCA) with Portland Housing Bureau gap funding, property tax exemptions and fee waivers. The Portland and Metro housing bonds are nearly fully allocated, so the city is leaning on Portland Clean Energy Fund money and its TIF districts, which set aside at least 45% of their revenue for affordable housing. Six new TIF districts approved in October 2024 started collecting in 2025 but will have little money in their first years.",
   "districts": {
     "tif": {
@@ -19,9 +19,9 @@
       "names": {
         "Interstate Corridor": {
           "title": "Interstate Corridor TIF district",
-          "text": "Portland's North/Northeast district, home to the N/NE Neighborhood Housing Strategy, which has invested about $135 million in affordable housing.",
-          "meaning": "City-funded projects here use the Preference Policy, which puts current and former longtime N/NE residents first in line for units.",
-          "url": "https://www.portland.gov/phb/nne-oversight"
+          "text": "Portland's North/Northeast TIF district, created in 2000 and home to the N/NE Neighborhood Housing Strategy, which has invested about $135 million in affordable housing. Prosper Portland lists the district as sunsetting: money already planned is still being spent, but no new funds will flow to it.",
+          "meaning": "Remaining district housing money is limited and already planned, so don't count on new TIF awards here. City-funded projects here use the Preference Policy, which puts current and former longtime N/NE residents first in line for units.",
+          "url": "https://prosperportland.us/our-work/interstate-corridor/"
         }
       }
     },
@@ -421,7 +421,7 @@
       "level": "neighborhood",
       "type": "Tax increment financing",
       "agency": "Portland Housing Bureau and Prosper Portland",
-      "summary": "At least 45% of TIF revenue across Portland's districts goes to PHB for affordable housing. The six districts approved October 30, 2024 (82nd Ave Area, East 205, Sumner Parkrose Argay Columbia Corridor, Central Eastside Corridor, Lloyd-Holladay, Westside) are projected to raise over $1 billion for affordable housing over 30 years, but little money is available in their first years. Each has a community committee writing a 5-year action plan.",
+      "summary": "At least 45% of TIF revenue across Portland's districts goes to PHB for affordable housing. The six districts approved October 30, 2024 (82nd Ave Area, East 205, Sumner Parkrose Argay Columbia Corridor, Central Eastside Corridor, Lloyd-Holladay, Westside) are projected to raise over $1 billion for affordable housing over 30 years, but little money is available in their first years. Each has a community committee writing a 5-year action plan. Older districts are winding down: Prosper Portland lists Interstate Corridor as sunsetting, with no new funds flowing to it.",
       "amount": "District-specific; spent through PHB solicitations",
       "eligibility": "Projects inside the district; funds flow through PHB NOFAs and RFPs.",
       "deadline": "Follow the district's action plan and PHB solicitations",
@@ -429,7 +429,13 @@
       "area": {
         "district": "tif"
       },
-      "contact": "prosper"
+      "contact": "prosper",
+      "references": [
+        {
+          "title": "Prosper Portland: Interstate Corridor TIF district (status: sunsetting)",
+          "url": "https://prosperportland.us/our-work/interstate-corridor/"
+        }
+      ]
     },
     {
       "id": "pdx_nne",
@@ -523,29 +529,58 @@
   "market": {
     "as_of": "November 2026",
     "cost_per_unit": {
-      "value": 400000,
-      "note": "Portland Housing Bond projects averaged about $385,000/unit (reported July 2024); downtown high-rises often cost more.",
-      "url": "https://wweek.com/news/city/2024/07/20/housing-bureau-expects-to-exceed-unit-goals-with-2016s-bond-cash"
+      "value": 580000,
+      "note": "Portland-area 2026 OHCS awards: Flatworks ($543,592/unit), Gordly Burch House ($571,164), Torchwood South in Tigard ($592,149) and Garfield Commons ($604,949), from the Aug, Oct and Nov 2026 Housing Stability Council packets.",
+      "url": "https://www.oregon.gov/ohcs/hsc/Documents/meetings/2026-NOV-06-HSC-Meeting-Packet.pdf",
+      "evidence": "published"
     },
     "rent": {
       "value": 1600,
       "note": "HUD FY2026: 60% AMI 2-bedroom max rent is $1,733/month (60% limit $69,300 for 3 people), less about $130 for utilities.",
-      "url": "https://www.huduser.gov/datasets/il/il2026/summary-mtsp?year=2026&reporttype_mtsp=hmfa&states=41&counties=4105199999&hmfa=METRO38900M38900"
+      "url": "https://www.huduser.gov/datasets/il/il2026/summary-mtsp?year=2026&reporttype_mtsp=hmfa&states=41&counties=4105199999&hmfa=METRO38900M38900",
+      "evidence": "published"
     },
     "opex": {
       "value": 8500,
-      "note": "Oregon regulated properties averaged $8,198/unit in FY24, up 31% since FY21 (OHCS 2026 portfolio analysis).",
-      "url": "https://www.oregon.gov/ohcs/compliance-monitoring/Documents/portfolio-analysis/2026-porfolio-financial-analysis.pdf"
+      "note": "OHCS's July 2026 underwriting range is $6,500-$8,500 per unit a year, not counting property taxes or resident services; its FY24 portfolio averaged $8,198.",
+      "url": "https://www.oregon.gov/ohcs/rental-housing/housing-development/Documents/general-policy-guideline-manual-july-2026.pdf",
+      "evidence": "published"
     },
     "dscr": {
       "value": 1.2,
-      "note": "Typical lender requirement; confirm with your lender and OHCS underwriting.",
-      "url": null
+      "note": "OHCS requires 1.15 to 1.30 debt coverage on must-pay debt (General Policy and Guideline Manual, July 2026).",
+      "url": "https://www.oregon.gov/ohcs/rental-housing/housing-development/Documents/general-policy-guideline-manual-july-2026.pdf",
+      "evidence": "published"
     },
     "lihtc_price": {
       "value": 0.83,
       "note": "2026 national LIHTC pricing: Novogradac Q1 2026 medians $0.80-$0.89; mid-2026 survey average 82.7 cents.",
-      "url": "https://www.bisnow.com/national/news/affordable-housing/affordable-housing-gaps-funding-lihtc-134169"
+      "url": "https://www.bisnow.com/national/news/affordable-housing/affordable-housing-gaps-funding-lihtc-134169",
+      "evidence": "published"
+    },
+    "vacancy": {
+      "value": 7,
+      "note": "OHCS pro formas must use 5% to 7% vacancy (7% to 10% for supportive housing units).",
+      "url": "https://www.oregon.gov/ohcs/rental-housing/housing-development/Documents/general-policy-guideline-manual-july-2026.pdf",
+      "evidence": "published"
+    },
+    "rent_growth": {
+      "value": 2,
+      "note": "OHCS pro formas grow income 2% a year.",
+      "url": "https://www.oregon.gov/ohcs/rental-housing/housing-development/Documents/general-policy-guideline-manual-july-2026.pdf",
+      "evidence": "published"
+    },
+    "expense_growth": {
+      "value": 3,
+      "note": "OHCS pro formas grow expenses 3% a year.",
+      "url": "https://www.oregon.gov/ohcs/rental-housing/housing-development/Documents/general-policy-guideline-manual-july-2026.pdf",
+      "evidence": "published"
+    },
+    "lihtc9_cap": {
+      "value": 2000000,
+      "note": "OHCS caps 9% LIHTC at $2,000,000 a year per project.",
+      "url": "https://www.oregon.gov/ohcs/rental-housing/housing-development/development-resources/Documents/lihtc/9-percent-tax-credit-additional-guidance.pdf",
+      "evidence": "published"
     }
   },
   "state_name": "Oregon",

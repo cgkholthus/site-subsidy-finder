@@ -140,6 +140,12 @@ class Handler(BaseHTTPRequestHandler):
             text = (query.get("q") or [""])[0]
             return self._send_json(200, {"suggestions": geo.suggest(text)})
 
+        if url.path == "/api/markets":
+            # Recommended market numbers per city, for the capital stack page's "start from scratch" mode.
+            return self._send_json(200, {"markets": [
+                {"id": c["id"], "name": c["name"], "market": c.get("market") or {}} for c in cities.CITIES_BY_ID.values()
+            ]})
+
         if url.path == "/api/status":
             return self._send_json(200, {"chat_enabled": chat.enabled()})
 

@@ -3,37 +3,104 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Capital Stack Estimate</title>
+  <title>Capital Stack &amp; Pro Forma · Site Subsidy Finder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;600&family=Geist:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <header class="top">
-    <div class="wrap">
-      <p class="back"><a id="back-link" href="/">← Back to site results</a></p>
-      <div class="brand">
-        <h1>Capital stack estimate</h1>
-        <p id="stack-site">Combines the potentially relevant programs for this site into a rough sources-and-uses estimate.</p>
-      </div>
+  <header class="site-header">
+    <div class="wrap nav-bar">
+      <a class="wordmark" href="/">Site <span>Subsidy</span> Finder</a>
+      <nav class="main-nav" aria-label="Main">
+        <a href="/">Subsidy Finder</a>
+        <a href="/stack.html" aria-current="page">Capital Stack</a>
+        <a href="/about.html">About</a>
+        <a href="/privacy.html">Privacy</a>
+      </nav>
     </div>
   </header>
+
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">Capital stack &amp; pro forma</p>
+      <h1>Rough out the deal <em>before you call the lender.</em></h1>
+      <p class="lede" id="stack-site">Build a sources-and-uses estimate and a 15-year operating pro forma. Start from scratch with your own numbers, or pull in the programs that may apply to a specific site.</p>
+    </div>
+  </section>
 
   <main class="wrap">
     <section class="disclaimer-box" role="note">
       <strong>Estimate only. This is not advice.</strong>
-      This page is a student prototype for learning and early planning. It uses simplified formulas and assumptions you can change below.
+      This page is a student prototype for learning and early planning. It uses simplified formulas and assumptions you can change below,
+      and only its tax credit math has been compared with real 2025-2026 awards; its full results haven't been checked against a real deal's complete sources and uses.
       It is not financial, investment, legal or tax advice, and it is not an offer or commitment of funding.
       Real amounts depend on agency rules, competition, underwriting and market pricing. Confirm everything with the funding agencies,
       a tax credit syndicator or lender, an attorney and a CPA before relying on it.
     </section>
 
+    <section class="setup" aria-labelledby="setup-title">
+      <h2 id="setup-title">Set up your project</h2>
+      <div class="mode-switch" role="group" aria-label="How to start">
+        <button type="button" data-mode="scratch" aria-pressed="true">Start from scratch</button>
+        <button type="button" data-mode="site" aria-pressed="false">Use a site address</button>
+      </div>
+
+      <form id="scratch-form" autocomplete="off">
+        <div class="setup-grid">
+          <label class="field">Project name
+            <input type="text" name="name" placeholder="e.g. Elm Street Apartments" maxlength="80">
+          </label>
+          <label class="field">Market (sets recommended numbers)
+            <select name="market" id="market-select"><option value="">Another market (general defaults)</option></select>
+          </label>
+          <label class="field">Rental or homeownership
+            <select name="tenure"><option value="rental">Rental</option><option value="ownership">Homeownership</option></select>
+          </label>
+          <label class="field">New building or renovation
+            <select name="construction"><option value="new">New construction</option><option value="rehab">Renovating an existing building</option></select>
+          </label>
+          <label class="field">Commercial or community space
+            <select name="commercial"><option value="no">No, housing only</option><option value="yes">Yes, some</option></select>
+          </label>
+          <fieldset>
+            <legend>Housing tax credits to model</legend>
+            <label class="check"><input type="checkbox" name="lihtc9" checked> 9% LIHTC (competitive)</label>
+            <label class="check"><input type="checkbox" name="lihtc4" checked> 4% LIHTC with bonds</label>
+            <label class="check"><input type="checkbox" name="boost"> Site is in a QCT or DDA (130% boost)</label>
+          </fieldset>
+          <fieldset id="historic-options">
+            <legend>Historic tax credits (rental renovations only)</legend>
+            <label class="check"><input type="checkbox" name="htc"> Federal historic credit (20%)</label>
+            <label class="check" id="la-htc-option"><input type="checkbox" name="la_historic_credit"> Louisiana historic credit (25%)</label>
+          </fieldset>
+        </div>
+        <p class="hint">Not sure if a site is in a Qualified Census Tract or Difficult Development Area? Look it up with "Use a site address" or the Subsidy Finder.</p>
+      </form>
+
+      <form id="site-form" class="site-form" autocomplete="off" hidden>
+        <input id="site-address" type="text" placeholder="e.g. 920 SW 3rd Ave, Portland, OR 97204" aria-label="Site address" required>
+        <button type="submit">Load site</button>
+      </form>
+      <p id="site-hint" class="hint" hidden>Pulls in the programs that may apply at a New Orleans or Portland address, plus any answers from the Subsidy Finder's project form.</p>
+      <div id="site-banner" class="site-banner" hidden></div>
+    </section>
+
     <p id="stack-error" class="error" hidden></p>
-    <p id="stack-loading" class="muted">Loading the site and programs… (the first lookup for an address can take several seconds)</p>
+    <p id="stack-loading" class="muted" hidden>Loading the site and programs… (the first lookup for an address can take several seconds)</p>
 
     <section class="stack-layout" id="stack" hidden>
       <div class="assumptions">
         <h2>Assumptions</h2>
-        <p class="muted">Starts with recommended numbers for this city. Type your own rough numbers and the estimate updates as you go.</p>
+        <p class="muted">Starts with recommended numbers for the market. Type your own rough numbers and the estimate updates as you go.</p>
         <form id="assumptions" autocomplete="off"></form>
+        <div class="other-sources">
+          <h3>Other sources</h3>
+          <p class="muted">Add any loan, grant or award you expect, such as a city gap loan. These count in every scenario.</p>
+          <div id="other-sources"></div>
+          <button type="button" id="add-source" class="secondary">+ Add a source</button>
+        </div>
       </div>
 
       <div class="scenarios">
@@ -43,7 +110,7 @@
         </div>
         <div id="scenarios"></div>
         <section class="notes">
-          <h3>How programs were combined</h3>
+          <h3>How the sources were combined</h3>
           <ul id="combine-notes"></ul>
           <h3>Also helps, but not counted as a source</h3>
           <ul id="also-helps"></ul>
@@ -53,6 +120,21 @@
 
     <p class="disclaimer">Estimate for planning and learning only; not financial, legal or tax advice. Student prototype.</p>
   </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div>
+        <p class="footer-brand">Site Subsidy Finder</p>
+        <p class="footer-note">A student prototype for learning and early research. Not legal, tax, financial or investment advice. Program details change; confirm everything with the administering agency.</p>
+      </div>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="/">Subsidy Finder</a>
+        <a href="/stack.html">Capital Stack &amp; Pro Forma</a>
+        <a href="/about.html">About</a>
+        <a href="/privacy.html">Privacy &amp; Disclaimers</a>
+      </nav>
+    </div>
+  </footer>
 
   <script src="/stack.js"></script>
   <script src="/chat.js"></script>

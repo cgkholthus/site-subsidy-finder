@@ -1,4 +1,6 @@
-// Capital stack estimate: combines the potentially relevant programs for a site into rough sources and uses.
+// Capital stack estimate and pro forma. Two ways in:
+// - "scratch": the user picks a market, project type and the credits to model, and adds their own sources;
+// - "site": a looked-up address supplies the potentially relevant programs (and any Subsidy Finder project answers).
 // Everything here is a simplified planning estimate, not advice; every assumption is editable on the page.
 
 const $ = (sel) => document.querySelector(sel);
@@ -9,7 +11,15 @@ function esc(value) {
 const usd = (n) => (n < 0 ? "−$" : "$") + Math.round(Math.abs(n)).toLocaleString();
 const pct = (n) => (n * 100).toFixed(0) + "%";
 
-const state = { lookup: null, values: {}, custom: {} };
+const state = {
+  mode: "scratch",
+  lookup: null,
+  values: {},
+  custom: {},        // amounts typed for site programs with no predictable award
+  touched: new Set(), // assumptions the user typed, kept when the setup changes
+  otherSources: [],  // [{name, amount}] the user's own sources, counted in every scenario
+  markets: [],
+};
 
 // ---------- assumptions ----------
 
@@ -35,7 +45,8 @@ const ASSUMPTIONS = [
     def: (l) => (l.project.construction === "rehab" ? 70 : 0), show: (l) => l.project.construction === "rehab",
     help: "Only used for historic tax credits." },
 
-  { key: "land_pct", label: "Land share of total cost", unit: "pct", def: 8 },
+  { key: "land_pct", label: "Land share of total cost", unit: "pct", def: 5,
+    help: "Recent Portland-area awards ran 1-7%." },
   { key: "affordable_pct", label: "Share of units that are affordable", unit: "pct", def: 100 },
   { key: "vacancy", label: "Vacancy and collection loss", unit: "pct", def: 7 },
   { key: "rent_growth", label: "Yearly rent growth (pro forma)", unit: "pct", def: 2,
@@ -45,9 +56,13 @@ const ASSUMPTIONS = [
   { key: "rate", label: "Permanent loan interest rate", unit: "pct", def: 6.5 },
   { key: "amort", label: "Loan term (years)", unit: "num", def: 35 },
   { key: "dscr", label: "Debt coverage ratio required", unit: "ratio", def: 1.2 },
-  { key: "basis_pct", label: "Share of housing cost in tax credit basis", unit: "pct", def: 85,
-    help: "Some costs (land, reserves, some financing costs) don't count toward LIHTC basis." },
+  { key: "basis_pct", label: "Share of non-land housing cost in tax credit basis", unit: "pct", def: 95,
+    help: "Reserves, permanent financing and syndication costs don't count toward LIHTC basis. With 5% land, 95% puts basis at about 90% of total cost, the median of 13 real 2025-2026 Oregon and Louisiana awards (84-92%)." },
   { key: "lihtc_price", label: "LIHTC price per $1 of credit", unit: "price", def: 0.83 },
+  { key: "lihtc9_cap", label: "Most 9% credits one project can get per year", unit: "usd", def: 1500000, show: (l) => !isOwnership(l),
+    help: "Each state's allocation plan caps 9% awards per project. Enter 0 for no cap." },
+  { key: "max_ltc", label: "Largest permanent loan as a share of total cost", unit: "pct", def: 60, show: (l) => !isOwnership(l),
+    help: "Lenders also limit a loan to a share of cost or value, so high rents can't size a loan bigger than the project." },
   { key: "fed_htc_price", label: "Federal historic credit price per $1", unit: "price", def: 0.88 },
   { key: "state_htc_price", label: "State historic credit price per $1", unit: "price", def: 0.8 },
   { key: "nmtc_net_pct", label: "NMTC net benefit (share of commercial cost)", unit: "pct", def: 20 },
@@ -65,6 +80,26 @@ function defaultFor(a) {
   const m = market(a.key);
   if (m) return m.value;
   return typeof a.def === "function" ? a.def(state.lookup) : a.def;
+}
+
+// How much diligence a number needs: a figure from a cited published source, our own rough estimate,
+// or a number the user typed (or answered in the project form).
+const EVIDENCE = {
+  published: { label: "Published figure", text: "From the cited published source; check it's current for your deal." },
+  estimate: { label: "Estimate", text: "A rough starting point, not from a published local source; needs your own diligence." },
+  yours: { label: "Your number", text: "Entered by you." },
+};
+
+function evidenceFor(a) {
+  if (state.touched.has(a.key)) return "yours";
+  if (a.key === "units" && state.lookup.project.units) return "yours";
+  const m = market(a.key);
+  return m && m.evidence === "published" && m.value === state.values[a.key] ? "published" : "estimate";
+}
+
+function evidenceTag(a) {
+  const e = evidenceFor(a);
+  return `<span class="evidence evidence-${e}" title="${esc(EVIDENCE[e].text)}">${EVIDENCE[e].label}</span>`;
 }
 
 // Rough entries are fine: "400k", "1.2m", "$1,100", "8%", "0.83".
@@ -89,7 +124,7 @@ function fieldHtml(a) {
   const rec = m ? `<small class="rec">Recommended for ${esc(state.lookup.city.name)}: <strong>${esc(formatValue(a, m.value))}</strong>. ${esc(m.note)}
       ${m.url ? `<a href="${esc(m.url)}" target="_blank" rel="noopener">Source ↗</a>` : ""}</small>` : "";
   return `
-    <label>${esc(a.label)}
+    <label><span class="label-row">${esc(a.label)} ${evidenceTag(a)}</span>
       <input type="text" inputmode="decimal" name="${a.key}" value="${esc(formatValue(a, state.values[a.key]))}" autocomplete="off">
       ${rec}
       ${a.help ? `<small>${esc(a.help)}</small>` : ""}
@@ -101,10 +136,15 @@ function renderAssumptions() {
   const quick = visible.filter((a) => a.quick);
   const more = visible.filter((a) => !a.quick);
   const asOf = (state.lookup.city.market || {}).as_of;
+  const hasMarket = Object.keys(state.lookup.city.market || {}).some((k) => k !== "as_of");
   $("#assumptions").innerHTML = `
     <div class="quick">${quick.map(fieldHtml).join("")}</div>
     <p class="rough-hint">Rough numbers are fine: type 400k, 1.2m or $1,100.</p>
-    <button type="button" id="use-recommended" class="secondary">Use recommended ${esc(state.lookup.city.name)} numbers</button>
+    <p class="evidence-key">Each number is labeled: <span class="evidence evidence-published">Published figure</span> comes from a cited source,
+      <span class="evidence evidence-estimate">Estimate</span> is a rough starting point that needs your own diligence, and
+      <span class="evidence evidence-yours">Your number</span> is one you entered.</p>
+    <button type="button" id="use-recommended" class="secondary">${hasMarket ? `Use recommended ${esc(state.lookup.city.name)} numbers` : "Reset to general defaults"}</button>
+    ${hasMarket ? "" : `<p class="rough-hint">No researched numbers for this market yet, so these are general placeholders. Replace them with local figures.</p>`}
     ${asOf ? `<p class="rough-hint">Recommendations reviewed ${esc(asOf)}; they're starting points, not quotes.</p>` : ""}
     <details class="more">
       <summary>More assumptions (optional)</summary>
@@ -112,6 +152,7 @@ function renderAssumptions() {
     </details>`;
   $("#use-recommended").addEventListener("click", () => {
     for (const a of ASSUMPTIONS) state.values[a.key] = defaultFor(a);
+    state.touched.clear();
     const wasOpen = $("#assumptions details.more").open;
     renderAssumptions();
     $("#assumptions details.more").open = wasOpen;
@@ -126,6 +167,9 @@ $("#assumptions").addEventListener("input", (e) => {
   e.target.classList.toggle("invalid", v === null && e.target.value.trim() !== "");
   if (v === null) return;
   state.values[e.target.name] = Math.max(0, v);
+  state.touched.add(e.target.name);
+  const tag = e.target.closest("label")?.querySelector(".evidence");
+  if (tag) tag.outerHTML = evidenceTag(ASSUMPTIONS.find((x) => x.key === e.target.name));
   renderScenarios();
 });
 $("#assumptions").addEventListener("focusout", (e) => {
@@ -203,18 +247,22 @@ function calcScenario(kind) {
 
   // Rentals: a permanent loan sized from net operating income. Homeownership: sale proceeds repay the construction loan.
   const noi = v.units * v.rent * 12 * (1 - v.vacancy / 100) - v.units * v.opex;
-  const loan = noi > 0 && v.dscr > 0 ? noi / v.dscr / loanConstant(v.rate, v.amort) : 0;
+  const incomeLoan = noi > 0 && v.dscr > 0 && v.amort > 0 ? noi / v.dscr / loanConstant(v.rate, v.amort) : 0;
+  const loanCap = tdc * (v.max_ltc / 100);
+  const loan = Math.min(incomeLoan, loanCap);
   if (state.lookup.project.tenure === "ownership") {
     add({ name: "Home sale proceeds", amount: v.units * v.sale_price,
           how: `${v.units} homes × ${usd(v.sale_price)} affordable sale price (repays construction financing)` });
   } else {
     add({ name: kind === "4" ? "Permanent loan (tax-exempt bond financed)" : "Permanent loan", amount: loan,
-          how: `Net operating income ${usd(noi)}/yr ÷ ${v.dscr} coverage, at ${v.rate}% over ${v.amort} years` });
+          how: `Net operating income ${usd(noi)}/yr ÷ ${v.dscr} coverage, at ${v.rate}% over ${v.amort} years` +
+            (incomeLoan > loanCap ? `; capped at ${v.max_ltc}% of total cost (income alone would support ${usd(incomeLoan)})` : "") });
   }
 
   // Historic credits on qualified rehab work.
   const qre = tdc * (v.qre_pct / 100);
-  if (qre > 0 && usable("htc")) {
+  const fedHtcCredit = qre > 0 && usable("htc") ? qre * 0.2 : 0;
+  if (fedHtcCredit > 0) {
     add({ name: "Federal historic tax credit equity", amount: qre * 0.2 * v.fed_htc_price, programId: "htc",
           how: `Rehab costs ${usd(qre)} × 20% × $${v.fed_htc_price}` });
   }
@@ -242,18 +290,31 @@ function calcScenario(kind) {
     add({ name: p.name, amount: state.custom[src.id] ?? 0, programId: src.id, editable: true, how: src.hint });
   }
 
+  // The user's own sources.
+  state.otherSources.forEach((src, i) => {
+    if (src.amount > 0) add({ name: src.name || `Other source ${i + 1}`, amount: src.amount, own: true, how: "Entered by you" });
+  });
+
   // LIHTC equity comes after the other sources: agencies may only award the credits a project needs to be
   // feasible (IRC 42(m)(2)), so use the smaller of the formula maximum and the remaining gap.
   if (kind === "9" || kind === "4") {
     const landShare = tdc > 0 ? housingCost / tdc : 1;
-    const basis = (housingCost - tdc * (v.land_pct / 100) * landShare) * (v.basis_pct / 100);
+    // Claiming the federal historic credit reduces the building's basis by the credit amount (IRC 50(c)),
+    // which lowers LIHTC eligible basis too.
+    const grossBasis = (housingCost - tdc * (v.land_pct / 100) * landShare) * (v.basis_pct / 100);
+    const basis = Math.max(0, grossBasis - fedHtcCredit * landShare);
     const boosted = flags.qct || flags.dda;
     const qualified = basis * (boosted ? 1.3 : 1) * (v.affordable_pct / 100);
     const rate = kind === "9" ? 0.09 : 0.04;
-    const maxEquity = qualified * rate * 10 * v.lihtc_price;
+    const formulaCredit = qualified * rate;
+    // 9% credits come from a limited state ceiling, and each state caps what one project can get.
+    const capped = kind === "9" && v.lihtc9_cap > 0 && formulaCredit > v.lihtc9_cap;
+    const annualCredit = capped ? v.lihtc9_cap : formulaCredit;
+    const maxEquity = annualCredit * 10 * v.lihtc_price;
     const otherSources = rows.reduce((sum, r) => sum + r.amount, 0);
     const equity = Math.max(0, Math.min(maxEquity, tdc - otherSources));
-    const formula = `Eligible basis ${usd(basis)}${boosted ? " × 130% boost (QCT/DDA)" : ""} × ${v.affordable_pct}% affordable × ${rate * 100}% × 10 years × $${v.lihtc_price} = up to ${usd(maxEquity)}`;
+    const htcNote = fedHtcCredit > 0 ? ` (after subtracting the ${usd(fedHtcCredit * landShare)} federal historic credit, IRC 50(c))` : "";
+    const formula = `Eligible basis ${usd(basis)}${htcNote}${boosted ? " × 130% boost (QCT/DDA)" : ""} × ${v.affordable_pct}% affordable × ${rate * 100}%${capped ? ` = ${usd(formulaCredit)}/yr, capped at the state's ${usd(v.lihtc9_cap)}/yr per project,` : ""} × 10 years × $${v.lihtc_price} = up to ${usd(maxEquity)}`;
     rows.splice(1, 0, {
       name: `${kind}% LIHTC equity`, amount: equity, programId: kind === "9" ? "lihtc9" : "lihtc4",
       how: equity < maxEquity - 1
@@ -301,7 +362,7 @@ function sourceGroup(row) {
   if (row.programId === "lihtc9" || row.programId === "lihtc4") return "lihtc";
   if (row.programId === "htc" || row.programId === "la_historic_credit") return "historic";
   if (row.programId === "nmtc") return "nmtc";
-  if (row.editable) return "grants";
+  if (row.editable || row.own) return "grants";
   if (row.name.startsWith("Deferred")) return "fee";
   return "loan";
 }
@@ -444,22 +505,31 @@ function renderNotes(kinds) {
   }
   if (kinds.includes("4")) {
     const tdc = v.units * v.cost_per_unit + v.commercial_cost;
-    notes.push(`4% credits need tax-exempt bonds covering at least 25% of eligible basis plus land (the rule for bonds issued after 2025), roughly ${usd(tdc * 0.25)} here. Part of the bonds is often repaid when construction ends.`);
+    notes.push(`4% credits need tax-exempt bonds covering at least 25% of aggregate basis plus land (the rule when a bond issue dated after 2025 finances at least 5%), roughly ${usd(tdc * 0.25)} here. Part of the bonds is often repaid when construction ends.`);
   }
   if (kinds.includes("none") && state.lookup.project.tenure === "ownership") {
     notes.push("This page models rental projects. Homeownership financing (buyer mortgages and down payment help) works differently, so only a simple cost-and-subsidy view is shown.");
+  } else if (kinds.includes("none") && state.mode === "scratch") {
+    notes.push("No housing tax credits are selected in the project setup.");
   } else if (kinds.includes("none")) {
     notes.push("Housing tax credits aren't counted because they're ruled out by your project answers (they need rental units at 60% AMI or below).");
   }
   if (usable("nmtc") && v.commercial_cost > 0) notes.push("New Markets Tax Credits are counted only for the commercial or community space; they can't finance the tax-credit housing itself.");
   if (usable("htc") || usable("la_historic_credit")) notes.push("Historic credits can be combined with housing credits; how they interact with eligible basis isn't modeled here.");
   if (usable("home")) notes.push("Federal grants can reduce LIHTC eligible basis, so HOME money is usually structured as a loan.");
-  notes.push("Programs marked \"verify eligibility\" depend on project answers you left blank or on agency review.");
-  notes.push("Only programs that aren't ruled out for this site and project are included.");
+  if (state.otherSources.some((src) => src.amount > 0)) notes.push("Your own sources are counted before housing tax credit equity, so the credits are sized to what's still needed.");
+  if (state.mode === "site") {
+    notes.push("Programs marked \"verify eligibility\" depend on project answers you left blank or on agency review.");
+    notes.push("Only programs that aren't ruled out for this site and project are included.");
+  } else {
+    notes.push("From scratch, only the credits you selected are modeled. Load a site address to add the programs that may apply there.");
+  }
   $("#combine-notes").innerHTML = notes.map((n) => `<li>${esc(n)}</li>`).join("");
 
   const helps = Object.entries(ALSO_HELPS).filter(([id]) => usable(id)).map(([id, text]) => `<li><strong>${esc(program(id).name)}:</strong> ${esc(text)}</li>`);
-  $("#also-helps").innerHTML = helps.length ? helps.join("") : "<li>None found for this site and project.</li>";
+  $("#also-helps").innerHTML = helps.length ? helps.join("")
+    : state.mode === "site" ? "<li>None found for this site and project.</li>"
+    : "<li>Load a site address to see programs that may lower costs or raise income, like tax exemptions and rental vouchers.</li>";
 }
 
 $("#scenarios").addEventListener("input", (e) => {
@@ -511,18 +581,18 @@ function buildProformaCsv() {
   const blank = () => rows.push([]);
 
   rows.push(["Development pro forma (estimate)"]);
-  rows.push(["Site", l.site.matched_address]);
-  rows.push(["City", l.city.name]);
+  rows.push([state.mode === "site" ? "Site" : "Project", l.site.matched_address]);
+  rows.push(["Market", l.city.name]);
   rows.push(["Prepared", new Date().toLocaleDateString()]);
   rows.push(["Disclaimer", "Estimate for learning and early planning only. Not financial, investment, legal or tax advice, and not an offer or commitment of funding. Student prototype. Confirm all figures with funding agencies, a syndicator or lender, an attorney and a CPA."]);
   blank();
 
   rows.push(["ASSUMPTIONS"]);
-  rows.push(["Assumption", "Value", "Recommended for " + l.city.name, "Source / note"]);
+  rows.push(["Assumption", "Value", "Evidence", "Recommended for " + l.city.name, "Source / note"]);
   for (const a of ASSUMPTIONS) {
     if (a.show && !a.show(l)) continue;
     const m = market(a.key);
-    rows.push([a.label, formatValue(a, v[a.key]), m ? formatValue(a, m.value) : "", m ? `${m.note}${m.url ? " " + m.url : ""}` : (a.help || "")]);
+    rows.push([a.label, formatValue(a, v[a.key]), EVIDENCE[evidenceFor(a)].label, m ? formatValue(a, m.value) : "", m ? `${m.note}${m.url ? " " + m.url : ""}` : (a.help || "")]);
   }
   blank();
 
@@ -590,18 +660,150 @@ function downloadProforma() {
 
 $("#download-proforma").addEventListener("click", downloadProforma);
 
-// ---------- load ----------
+// ---------- other sources ----------
 
-async function load() {
-  const params = new URLSearchParams(location.search);
-  const address = params.get("address");
-  $("#back-link").href = "/?" + params.toString();
-  if (!address) {
-    $("#stack-loading").hidden = true;
-    $("#stack-error").textContent = "Look up an address on the main page first, then open the capital stack estimate from there.";
-    $("#stack-error").hidden = false;
+function renderOtherSources() {
+  $("#other-sources").innerHTML = state.otherSources.map((src, i) => `
+    <div class="row">
+      <input type="text" data-i="${i}" data-field="name" value="${esc(src.name)}" placeholder="e.g. City gap loan" aria-label="Source name">
+      <input type="text" inputmode="decimal" data-i="${i}" data-field="amount" value="${src.amount ? usd(src.amount) : ""}" placeholder="$0" aria-label="Amount">
+      <button type="button" class="remove" data-i="${i}" aria-label="Remove this source">×</button>
+    </div>`).join("");
+}
+
+$("#add-source").addEventListener("click", () => {
+  state.otherSources.push({ name: "", amount: 0 });
+  renderOtherSources();
+  $(`#other-sources input[data-i="${state.otherSources.length - 1}"][data-field="name"]`).focus();
+});
+$("#other-sources").addEventListener("input", (e) => {
+  const i = Number(e.target.dataset.i);
+  if (!state.otherSources[i]) return;
+  if (e.target.dataset.field === "name") state.otherSources[i].name = e.target.value.trim();
+  else {
+    const v = parseRough(e.target.value);
+    e.target.classList.toggle("invalid", v === null && e.target.value.trim() !== "");
+    if (v === null) return;
+    state.otherSources[i].amount = Math.max(0, v);
+  }
+  renderScenarios();
+});
+$("#other-sources").addEventListener("focusout", (e) => {
+  const i = Number(e.target.dataset.i);
+  if (e.target.dataset.field === "amount" && state.otherSources[i]) {
+    e.target.value = state.otherSources[i].amount ? usd(state.otherSources[i].amount) : "";
+    e.target.classList.remove("invalid");
+  }
+});
+$("#other-sources").addEventListener("click", (e) => {
+  if (!e.target.classList.contains("remove")) return;
+  state.otherSources.splice(Number(e.target.dataset.i), 1);
+  renderOtherSources();
+  renderScenarios();
+});
+
+// ---------- setup: scratch or site ----------
+
+const SCRATCH_PROGRAMS = {
+  lihtc9: "9% Low-Income Housing Tax Credit (competitive)",
+  lihtc4: "4% LIHTC with tax-exempt private activity bonds",
+  htc: "Federal Historic Rehabilitation Tax Credit",
+  la_historic_credit: "Louisiana State Commercial Historic Rehabilitation Tax Credit",
+};
+
+// A stand-in for a site lookup, built from the scratch form, so the same math and pro forma work without an address.
+function scratchLookup() {
+  const f = $("#scratch-form").elements;
+  const market = state.markets.find((m) => m.id === f.market.value);
+  // Historic credits need an existing building that produces income (rentals), so not for-sale homes.
+  const rehab = f.construction.value === "rehab" && f.tenure.value === "rental";
+  const isNola = market && market.id === "new_orleans";
+  $("#la-htc-option").hidden = !isNola;
+  for (const box of $("#historic-options").querySelectorAll("input")) box.disabled = !rehab;
+  const chosen = Object.keys(SCRATCH_PROGRAMS).filter((id) => {
+    if (!f[id].checked) return false;
+    if (id === "htc" || id === "la_historic_credit") return rehab && (id === "htc" || isNola);
+    return true;
+  });
+  return {
+    site: { matched_address: f.name.value.trim() || "Untitled project" },
+    city: { name: market ? market.name : "your market", market: market ? market.market : {} },
+    flags: { qct: f.boost.checked, dda: false },
+    project: { tenure: f.tenure.value, construction: f.construction.value, commercial: f.commercial.value === "yes" },
+    programs: { federal: chosen.map((id) => ({ id, name: SCRATCH_PROGRAMS[id], status: "eligible" })) },
+  };
+}
+
+// Recompute defaults for anything the user hasn't typed, so setup changes (market, rehab, commercial) flow through.
+function applyDefaults() {
+  for (const a of ASSUMPTIONS) {
+    if (!state.touched.has(a.key) || state.values[a.key] === undefined) state.values[a.key] = defaultFor(a);
+  }
+}
+
+function showStack() {
+  applyDefaults();
+  const wasOpen = $("#assumptions details.more")?.open;
+  renderAssumptions();
+  if (wasOpen) $("#assumptions details.more").open = true;
+  renderOtherSources();
+  renderScenarios();
+  $("#stack-loading").hidden = true;
+  $("#stack").hidden = false;
+}
+
+function setMode(mode) {
+  for (const b of document.querySelectorAll(".mode-switch button")) b.setAttribute("aria-pressed", String(b.dataset.mode === mode));
+  $("#scratch-form").hidden = mode !== "scratch";
+  const hasSite = new URLSearchParams(location.search).get("address");
+  $("#site-form").hidden = mode !== "site" || !!hasSite;
+  $("#site-hint").hidden = mode !== "site" || !!hasSite;
+  $("#site-banner").hidden = mode !== "site" || !hasSite;
+}
+
+$(".mode-switch").addEventListener("click", (e) => {
+  const mode = e.target.dataset?.mode;
+  if (!mode) return;
+  if (mode === "scratch" && state.mode === "site") {
+    location.href = "/stack.html"; // leave the site behind and start fresh
     return;
   }
+  setMode(mode);
+  if (mode === "site") $("#site-address").focus();
+});
+
+$("#scratch-form").addEventListener("change", (e) => {
+  if (state.mode !== "scratch") return;
+  if (e.target.name === "market") state.touched.clear(); // a new market brings its own recommendations
+  state.lookup = scratchLookup();
+  showStack();
+});
+$("#scratch-form").addEventListener("input", (e) => {
+  if (e.target.name !== "name" || state.mode !== "scratch") return;
+  state.lookup.site.matched_address = e.target.value.trim() || "Untitled project";
+});
+$("#scratch-form").addEventListener("submit", (e) => e.preventDefault());
+
+$("#site-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const address = $("#site-address").value.trim();
+  if (address) location.href = "/stack.html?" + new URLSearchParams({ address });
+});
+
+async function loadMarkets() {
+  try {
+    const res = await fetch("/api/markets");
+    state.markets = (await res.json()).markets || [];
+  } catch {
+    state.markets = [];
+  }
+  const select = $("#market-select");
+  for (const m of state.markets) select.insertAdjacentHTML("beforeend", `<option value="${esc(m.id)}">${esc(m.name)}</option>`);
+  if (state.markets.length) select.value = state.markets[0].id;
+}
+
+async function loadSite(params) {
+  $("#stack-loading").hidden = false;
   try {
     const res = await fetch("/api/lookup?" + params.toString());
     const data = await res.json();
@@ -613,12 +815,27 @@ async function load() {
     $("#stack-error").hidden = false;
     return;
   }
-  $("#stack-site").textContent = `${state.lookup.site.matched_address} · ${state.lookup.city.name}. Combines the programs this site isn't ruled out for into a rough sources-and-uses estimate.`;
-  for (const a of ASSUMPTIONS) state.values[a.key] = defaultFor(a);
-  renderAssumptions();
-  renderScenarios();
-  $("#stack-loading").hidden = true;
-  $("#stack").hidden = false;
+  const l = state.lookup;
+  $("#stack-site").textContent = `${l.site.matched_address} · ${l.city.name}. Combines the programs this site isn't ruled out for into a rough sources-and-uses estimate and pro forma.`;
+  $("#site-banner").innerHTML = `
+    <p>Using the programs for <strong>${esc(l.site.matched_address)}</strong>${Object.keys(l.project || {}).length ? " and your Subsidy Finder project answers" : ""}.</p>
+    <span><a href="/?${esc(params.toString())}">See this site's programs</a> · <a href="/stack.html">Start from scratch instead</a></span>`;
+  showStack();
+}
+
+async function init() {
+  await loadMarkets();
+  const params = new URLSearchParams(location.search);
+  if (params.get("address")) {
+    state.mode = "site";
+    setMode("site");
+    await loadSite(params);
+  } else {
+    state.mode = "scratch";
+    setMode("scratch");
+    state.lookup = scratchLookup();
+    showStack();
+  }
 }
 
 // The chatbot (chat.js, shared with the results page) asks about this page's site and project answers.
@@ -634,9 +851,9 @@ window.siteChatContext = () => {
     page: "stack",
     address: params.get("address") || "",
     project,
-    matchedAddress: state.lookup && state.lookup.site.matched_address,
+    matchedAddress: state.mode === "site" && state.lookup ? state.lookup.site.matched_address : null,
     stackHref: location.href,
   };
 };
 
-load();
+init();

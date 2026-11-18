@@ -5,19 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Site Subsidy Finder</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;600&family=Geist:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <header class="top">
+  <header class="site-header">
+    <div class="wrap nav-bar">
+      <a class="wordmark" href="/">Site <span>Subsidy</span> Finder</a>
+      <nav class="main-nav" aria-label="Main">
+        <a href="/" aria-current="page">Subsidy Finder</a>
+        <a href="/stack.html">Capital Stack</a>
+        <a href="/about.html">About</a>
+        <a href="/privacy.html">Privacy</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
     <div class="wrap">
-      <div class="brand">
-        <h1>Site Subsidy Finder</h1>
-        <p>Enter a development site in <strong>New Orleans, LA</strong> or <strong>Portland, OR</strong> to see the tax credits, grants, loans and requirements that apply at the federal, state, local and neighborhood level.</p>
-      </div>
+      <p class="eyebrow">Affordable housing funding research · New Orleans &amp; Portland</p>
+      <h1>Find the funding <em>behind every site.</em></h1>
+      <p class="lede">Enter a development site in New Orleans, LA or Portland, OR to see the tax credits, grants, loans and requirements that may apply at the federal, state, local and neighborhood level.</p>
       <form id="search" class="search" autocomplete="off">
         <div class="address-wrap">
           <input id="address" name="address" type="text" placeholder="e.g. 1300 Perdido St, New Orleans, LA 70112" required
-            role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="address-suggestions">
+            role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="address-suggestions" aria-label="Site address">
           <ul id="address-suggestions" class="suggestions" role="listbox" hidden></ul>
         </div>
         <button type="submit">Look up site</button>
@@ -25,7 +39,27 @@
       <p class="examples">Try: <a href="?address=1300%20Perdido%20St%2C%20New%20Orleans%2C%20LA%2070112">1300 Perdido St, New Orleans</a> · <a href="?address=920%20SW%203rd%20Ave%2C%20Portland%2C%20OR%2097204">920 SW 3rd Ave, Portland</a></p>
       <p id="search-error" class="error" hidden></p>
     </div>
-  </header>
+  </section>
+
+  <section id="intro" class="wrap" aria-label="What this site does">
+    <div class="features">
+      <div class="feature">
+        <span class="num">01</span>
+        <h3>Subsidy Finder</h3>
+        <p>Look up an address to see its federal zones, local districts and the programs that are potentially relevant there, with official sources and agency contacts.</p>
+      </div>
+      <a class="feature" href="/stack.html">
+        <span class="num">02</span>
+        <h3>Capital Stack &amp; Pro Forma</h3>
+        <p>Rough out sources and uses and a 15-year operating pro forma, from scratch or from a site's programs. Download it as a spreadsheet.</p>
+      </a>
+      <div class="feature">
+        <span class="num">03</span>
+        <h3>Ask a Question</h3>
+        <p>A cited, student-built assistant that explains programs and the estimate's math. It answers only from this site's research and gives no legal or tax advice.</p>
+      </div>
+    </div>
+  </section>
 
   <main class="wrap" id="results" hidden>
     <section class="site">
@@ -79,7 +113,7 @@
       </form>
     </section>
 
-    <p class="stack-link"><a id="stack-link" href="/stack.html">Estimate a capital stack for this site →</a></p>
+    <p class="stack-link"><a id="stack-link" href="/stack.html"><strong>Build a capital stack for this site</strong><span>Sources and uses, plus a downloadable pro forma →</span></a></p>
 
     <h2 class="results-heading">Potentially relevant programs</h2>
     <p class="results-note">Location alone doesn't establish eligibility. "Potentially relevant" means the site's location fits; "Matches key requirements" means your project answers also fit the published rules. The administering agency makes the final decision, so contact it before relying on a program.</p>
@@ -104,6 +138,21 @@
 
     <p class="disclaimer" id="disclaimer"></p>
   </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div>
+        <p class="footer-brand">Site Subsidy Finder</p>
+        <p class="footer-note">A student prototype for learning and early research. Not legal, tax, financial or investment advice. Program details change; confirm everything with the administering agency.</p>
+      </div>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="/">Subsidy Finder</a>
+        <a href="/stack.html">Capital Stack &amp; Pro Forma</a>
+        <a href="/about.html">About</a>
+        <a href="/privacy.html">Privacy &amp; Disclaimers</a>
+      </nav>
+    </div>
+  </footer>
 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>

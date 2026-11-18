@@ -76,7 +76,7 @@
       <strong>Ask about programs</strong>
       <button id="chat-close" type="button" class="chat-close" aria-label="Close chat">×</button>
     </header>
-    <p class="chat-disclosure"><strong>Student prototype.</strong> This assistant is a student project, not an official or professional service. It answers only from this site's program database, which may be incomplete or out of date, and it does not give legal or tax advice. Questions are sent to Google's Gemini AI.</p>
+    <p class="chat-disclosure"><strong>Student prototype.</strong> This assistant is a student project, not an official or professional service. It answers only from this site's program database, which may be incomplete or out of date, and it does not give legal or tax advice. Questions are sent to Google's Gemini AI, so don't include personal or confidential details. <a href="/privacy.html#privacy">Privacy</a></p>
     <div id="chat-log" class="chat-log" aria-live="polite"></div>
     <form id="chat-form" class="chat-form" autocomplete="off">
       <input id="chat-input" type="text" maxlength="1000" placeholder="${esc(PAGE_TEXT[page].placeholder)}" required>

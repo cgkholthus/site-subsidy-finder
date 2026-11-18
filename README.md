@@ -45,22 +45,14 @@ Every zone chip on the site summary (Opportunity Zone, QCT, BioDistrict, TIF dis
 
 Typing a house number and street shows suggestions from each city's official address records: New Orleans' Site Address Point layer and Portland's address geocoding service (filtered to Portland). The `/api/suggest` endpoint queries both and is rate-limited per visitor.
 
-## Capital stack estimate
+## Capital stack and pro forma
 
-`stack.html` ("Estimate a capital stack for this site" on the results page) combines the programs not ruled out for the site and project into a rough sources-and-uses estimate. It's clearly labeled as an estimate for learning and planning, not financial, legal or tax advice.
+`stack.html` ("Capital Stack" in the menu) builds a rough sources-and-uses estimate and a downloadable 15-year pro forma (CSV). Start from scratch (pick a market, project type and the tax credits to model, then add your own sources) or load a site address to pull in the programs that may apply there. It's clearly labeled as an estimate for learning and planning, not financial, legal or tax advice.
 
-- A permanent loan is sized from rents and operating costs (home sale proceeds for homeownership projects).
-- LIHTC equity comes from eligible basis, with the 130% boost in a QCT or DDA. It's capped at the remaining gap, because agencies only award the credits a project needs (IRC 42(m)(2)).
-- Historic credits use renovation costs; NMTC applies only to commercial space; FHLBank AHP uses an assumed typical award.
-- Programs without a predictable amount (city NOFAs, HOME, CDBG and others) start at $0 with a box to enter an expected award.
-- 9% and 4% credits can't be combined, so both appear as separate scenarios when both are possible.
-- Tax abatements, fee waivers and rent subsidies are listed as "also helps" rather than counted.
+## Other pages
 
-The page starts with a few quick inputs (units, cost per unit, rent, operating cost, plus commercial or renovation cost when the project has them) that accept rough entries like `400k`, `1.2m` or `$1,100`. The rest sit under "More assumptions". Defaults come from each city file's `market` section: researched, sourced recommendations for cost per unit, 60% AMI rent (from HUD's FY2026 MTSP limits), operating cost, debt coverage and LIHTC pricing. All calculations run in the browser (`static/stack.js`).
-
-"Download pro forma (CSV)" exports a spreadsheet-ready file: the disclaimer, every assumption (with the recommended value and source), uses with per-unit amounts, sources for each scenario with how each was estimated, and a 15-year operating cash flow (rent, vacancy, operating costs, net operating income, debt service, cash flow and debt coverage, with rent and expense growth from "More assumptions").
-
-Each scenario shows two bars at the same scale: "Where the money comes from" (sources grouped into up to six blocks, plus a hatched "Remaining gap" block) and "Where the money goes" (land, construction, soft costs, developer fee, commercial space). Hovering or tabbing to a block shows its amount and share. Colors come from a palette validated for colorblind safety in light and dark mode.
+- `about.html`: what the site is and a short bio of its creator.
+- `privacy.html`: plain-language privacy policy and disclaimers.
 
 ## Deploying to a public link (Render)
 

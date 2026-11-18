@@ -405,6 +405,7 @@ function renderMap() {
 
 function renderAll() {
   $("#results").hidden = false;
+  $("#intro").hidden = true; // the tool overview only shows before the first search
   renderSite();
   renderCity();
   renderPrograms();

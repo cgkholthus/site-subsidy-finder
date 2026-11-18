@@ -2,7 +2,7 @@
   "id": "new_orleans",
   "name": "New Orleans, LA",
   "place_geoid": "2255000",
-  "last_reviewed": "2026-11-11",
+  "last_reviewed": "2026-11-17",
   "local_context": "New Orleans (Orleans Parish) layers state tax credits from the Louisiana Housing Corporation with city gap funds, Finance New Orleans bonds and PILOTs, and HANO project-based vouchers. Location matters a lot here: historic, cultural and downtown districts unlock the state historic credit and the Restoration Tax Abatement, while inclusionary zoning applies only in certain sub-districts. City gap funding has been tight since 2025, and the inclusionary mandate is under review after a November 2025 study recommended ending it.",
   "districts": {
     "miz": {
@@ -505,29 +505,58 @@
   "market": {
     "as_of": "November 2026",
     "cost_per_unit": {
-      "value": 400000,
-      "note": "Recent New Orleans LIHTC deals: Canal Crossing Senior (about $385k/unit) and Esplanade Delille (about $394k/unit) in LHC's 2026 programs report.",
-      "url": "https://webapps3.lhc.la.gov/documents/BoardCommitteeMaterials/2026/March/BODM/LHC%20Programs%20Report.pdf"
+      "value": 370000,
+      "note": "New Orleans-area 9% deals: Blueberry Hill 2 in Orleans ($321,809/unit) and Marrero Village in Jefferson ($358,112) in LHC's 2025 awards; Canal Crossing Senior (about $385k) and Esplanade Delille (about $394k) in LHC's 2026 programs report.",
+      "url": "https://www.lhc.la.gov/hubfs/Document%20Libraries/Housing%20Development/Funding%20Opportunities/LIHTC/Final%202025%20QAP%20Rankings%20as%20of%2010.15.25.pdf",
+      "evidence": "published"
     },
     "rent": {
       "value": 1100,
       "note": "HUD FY2026: 60% AMI 2-bedroom max rent is $1,197/month (60% limit $47,880 for 3 people), less about $100 for utilities.",
-      "url": "https://www.huduser.gov/datasets/il/il2026/summary-mtsp?year=2026&reporttype_mtsp=hmfa&states=22&counties=2207199999&hmfa=METRO35380M35380"
+      "url": "https://www.huduser.gov/datasets/il/il2026/summary-mtsp?year=2026&reporttype_mtsp=hmfa&states=22&counties=2207199999&hmfa=METRO35380M35380",
+      "evidence": "published"
     },
     "opex": {
       "value": 8000,
       "note": "Estimate; no official local benchmark found. Insurance is high here: Gulf Coast affordable properties averaged $1,205/unit in 2023.",
-      "url": "https://enterprisecommunity.org/sites/default/files/2024-10/Gulf-Coast-Insurance-Brief.pdf"
+      "url": "https://enterprisecommunity.org/sites/default/files/2024-10/Gulf-Coast-Insurance-Brief.pdf",
+      "evidence": "estimate"
     },
     "dscr": {
       "value": 1.2,
       "note": "Louisiana Housing Corporation underwriting keeps debt coverage between 1.15 and 1.40.",
-      "url": "https://www.lhc.la.gov/hubfs/Document%20Libraries/Housing%20Development/Funding%20Opportunities/LIHTC/2025%20QAP%20Final%20as%20of%2002.14.25.pdf"
+      "url": "https://www.lhc.la.gov/hubfs/Document%20Libraries/Housing%20Development/Funding%20Opportunities/LIHTC/2025%20QAP%20Final%20as%20of%2002.14.25.pdf",
+      "evidence": "published"
     },
     "lihtc_price": {
       "value": 0.83,
       "note": "2026 national LIHTC pricing: Novogradac Q1 2026 medians $0.80-$0.89; mid-2026 survey average 82.7 cents.",
-      "url": "https://www.bisnow.com/national/news/affordable-housing/affordable-housing-gaps-funding-lihtc-134169"
+      "url": "https://www.bisnow.com/national/news/affordable-housing/affordable-housing-gaps-funding-lihtc-134169",
+      "evidence": "published"
+    },
+    "vacancy": {
+      "value": 7,
+      "note": "LHC cash flows use the greater of 7% vacancy or the market analyst's rate (2025 QAP).",
+      "url": "https://www.lhc.la.gov/hubfs/Document%20Libraries/Housing%20Development/Funding%20Opportunities/LIHTC/2025%20QAP%20Final%20as%20of%2002.14.25.pdf",
+      "evidence": "published"
+    },
+    "rent_growth": {
+      "value": 2,
+      "note": "LHC requires revenue to grow 2% a year in the 20-year cash flow (2025 QAP).",
+      "url": "https://www.lhc.la.gov/hubfs/Document%20Libraries/Housing%20Development/Funding%20Opportunities/LIHTC/2025%20QAP%20Final%20as%20of%2002.14.25.pdf",
+      "evidence": "published"
+    },
+    "expense_growth": {
+      "value": 3,
+      "note": "LHC requires expenses to grow 3% a year for the first 15 years (2025 QAP).",
+      "url": "https://www.lhc.la.gov/hubfs/Document%20Libraries/Housing%20Development/Funding%20Opportunities/LIHTC/2025%20QAP%20Final%20as%20of%2002.14.25.pdf",
+      "evidence": "published"
+    },
+    "lihtc9_cap": {
+      "value": 1500000,
+      "note": "LHC caps 9% LIHTC at $1,500,000 a year per project in the 8 metropolitan parishes, including Orleans (2025 QAP); 8 of 45 2025 awards hit it.",
+      "url": "https://www.lhc.la.gov/hubfs/Document%20Libraries/Housing%20Development/Funding%20Opportunities/LIHTC/2025%20QAP%20Final%20as%20of%2002.14.25.pdf",
+      "evidence": "published"
     }
   },
   "state_name": "Louisiana",
