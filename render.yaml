@@ -1,7 +1,7 @@
 # Render deployment (https://render.com): a free web service that runs the Python server.
 services:
   - type: web
-    name: site-subsidy-finder
+    name: develop-affordable
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt

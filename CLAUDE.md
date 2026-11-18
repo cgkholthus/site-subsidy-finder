@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Site Subsidy Finder: a small website where an affordable housing developer enters a site address in **New Orleans, LA** or **Portland, OR** and sees the federal, state, county/city and neighborhood programs (tax credits, grants, loans, fee waivers, zoning requirements) that apply there.
+Develop Affordable (formerly Site Subsidy Finder): a small website where an affordable housing developer enters a site address in **New Orleans, LA** or **Portland, OR** and sees the federal, state, county/city and neighborhood programs (tax credits, grants, loans, fee waivers, zoning requirements) that apply there.
 
 ## Running it
 

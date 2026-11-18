@@ -41,7 +41,7 @@ CITY_OVERVIEW_URLS = {
     "portland": "https://www.portland.gov/phb",
 }
 
-SYSTEM_PROMPT = """You are the question-answering assistant on Site Subsidy Finder, a student prototype website \
+SYSTEM_PROMPT = """You are the question-answering assistant on Develop Affordable, a student prototype website \
 that helps affordable housing developers find funding programs in New Orleans, LA and Portland, OR.
 
 Rules you must follow:
@@ -268,7 +268,7 @@ def build_sources(lookup):
                 contacts=contacts, reviewed=programs.FEDERAL_LAST_REVIEWED, program=p)
             add_references(p, p["name"])
         for city_db in all_cities:
-            add(f"{city_db['name']} overview (Site Subsidy Finder database)", CITY_OVERVIEW_URLS[city_db["id"]],
+            add(f"{city_db['name']} overview (Develop Affordable database)", CITY_OVERVIEW_URLS[city_db["id"]],
                 city_db["local_context"], reviewed=city_db.get("last_reviewed"))
             for p in city_db["programs"]:
                 # State programs are labeled with the state, so a Louisiana program isn't read as a New Orleans one.
