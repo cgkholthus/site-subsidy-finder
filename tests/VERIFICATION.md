@@ -159,3 +159,13 @@ The finding:
 - **Deferred fee caps:** Louisiana's $2,000,000 fee cap for 9% deals and Oregon's fee tables (12–22% depending on size and credit type) aren't modeled; the page uses a 12% fee.
 - **The 4% bond test** isn't modeled.
 - **Louisiana's disaster-area boost:** LHC grants the 30% boost to 9% projects in federally declared disaster areas, and the 2025 New Orleans-area awards were sized as if boosted. The page applies the boost only when the site is in a QCT or DDA, or when you check the box.
+
+## 5. Land and building purchase prices (2026-11-18)
+
+The page now accepts a land purchase price and, for renovations, an existing building purchase price, in place of the land percentage. Both are part of total cost, not added to it.
+
+- The building purchase is basis of its own: acquisition credits use the 4% rate and never get the 130% QCT/DDA boost, which covers only new buildings and rehab spending (IRC 42(b), 42(d)(5)(B)). Acquisition credits need the building to have last been placed in service at least 10 years earlier (IRC 42(d)(2)); the page says so but doesn't check it.
+- Historic rehab costs can't exceed total cost minus the purchase prices.
+- `tests/check_stack.py` adds project D (Portland renovation, 50 units at $450,000, QCT, $1.2 million land, $6 million building). The page matches on all 9 figures compared (`tests/page_numbers_2026-11-18.json`): 9% equity $16,106,938 from $14,535,000 of rehab basis × 130% × 9% plus $6,000,000 × 4%.
+- Projects A-C are unchanged when no purchase prices are entered.
+- A note warns when the purchase prices leave little or nothing for construction.

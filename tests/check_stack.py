@@ -1,6 +1,6 @@
 """Independent check of the capital stack page's math.
 
-Works out two sample projects from first principles (standard loan-payment formula, IRC 42 credit
+Works out four sample projects from first principles (standard loan-payment formula, IRC 42 credit
 formula) without reusing any code from static/stack.js. Prints the expected numbers; compare them with
 the page and the downloaded CSV, or pass a JSON file of the page's numbers to compare automatically:
 
@@ -27,7 +27,10 @@ def project(p):
     loan = min(income_loan, tdc * p["max_ltc"])  # lenders cap the loan at a share of cost
     max_payment = loan * annual_debt_service_per_dollar(p["rate"], p["years"])
 
-    qre = tdc * p.get("qre_share", 0)
+    # Land: the entered purchase price, or a share of total cost. A building purchase is part of total cost too.
+    land = min(p["land_price"], tdc) if p.get("land_price") else tdc * p["land"]
+    acq = max(0.0, min(p.get("building_price", 0), tdc - land))
+    qre = min(tdc * p.get("qre_share", 0), max(0.0, tdc - land - acq))  # rehab work excludes purchase prices
     fed_htc_credit = qre * 0.20 if p.get("fed_htc") else 0
     fed_htc_equity = fed_htc_credit * p["fed_htc_price"]
     la_htc_equity = qre * 0.25 * p["la_htc_price"] if p.get("la_htc") else 0
@@ -35,12 +38,14 @@ def project(p):
 
     # Eligible basis: depreciable cost (no land), the share counted in basis, less the federal
     # historic credit (IRC 50(c) basis reduction).
-    eligible = (tdc - tdc * p["land"]) * p["basis_share"] - fed_htc_credit
+    eligible = (tdc - land - acq) * p["basis_share"] - fed_htc_credit
     qualified = eligible * (1.3 if p["boost"] else 1.0) * p["affordable"]
+    # Acquisition credits: building purchase price at the 4% rate, never boosted (IRC 42(b), 42(d)(5)(B)).
+    acq_credit = acq * p["affordable"] * 0.04
 
     out = {"tdc": tdc, "noi": noi, "loan": loan, "annual_debt_service": max_payment}
     for kind, rate in (("9", 0.09), ("4", 0.04)):
-        annual_credit = qualified * rate
+        annual_credit = qualified * rate + acq_credit
         if kind == "9" and p["cap9"]:
             annual_credit = min(annual_credit, p["cap9"])  # state per-project cap on 9% credits
         max_equity = annual_credit * 10 * p["lihtc_price"]
@@ -81,6 +86,10 @@ CASES = {
                          qre_share=0.70, fed_htc=True, la_htc=True, cap9=1_500_000),
     # C: New Orleans, 30 units at a very high $9,000 rent: the loan hits the 60%-of-cost limit.
     "C_nola_loan_cap": dict(COMMON, units=30, cost_per_unit=370_000, rent=9000, opex=8000, boost=False, cap9=1_500_000),
+    # D: Portland renovation, 50 units, in a QCT, with entered land ($1.2M) and building ($6M) purchase prices.
+    #    Tests the purchase prices, acquisition credits at 4% with no boost, and rehab basis with the boost.
+    "D_pdx_purchase": dict(COMMON, units=50, cost_per_unit=450_000, rent=1500, opex=8000, boost=True,
+                           land_price=1_200_000, building_price=6_000_000, cap9=0),
 }
 
 

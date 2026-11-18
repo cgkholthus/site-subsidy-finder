@@ -31,7 +31,7 @@ const isOwnership = (l) => l.project.tenure === "ownership";
 const ASSUMPTIONS = [
   { quick: true, key: "units", label: "Housing units", unit: "num", def: (l) => l.project.units || 60 },
   { quick: true, key: "cost_per_unit", label: "Total development cost per unit", unit: "usd", def: 400000,
-    help: "Everything: land, construction, fees and financing costs, divided by units." },
+    help: "Everything: land and building purchase, construction, fees and financing costs, divided by units." },
   { quick: true, key: "rent", label: "Average monthly rent per unit", unit: "usd", def: 1200, show: (l) => !isOwnership(l),
     help: "Use the program's rent limits for your income levels." },
   { quick: true, key: "sale_price", label: "Affordable sale price per home", unit: "usd", def: 250000, show: isOwnership,
@@ -44,9 +44,14 @@ const ASSUMPTIONS = [
   { quick: true, key: "qre_pct", label: "Share of cost that is historic renovation work", unit: "pct",
     def: (l) => (l.project.construction === "rehab" ? 70 : 0), show: (l) => l.project.construction === "rehab",
     help: "Only used for historic tax credits." },
+  { quick: true, key: "land_price", label: "Land purchase price", unit: "usd", def: 0,
+    help: "Part of the total cost above, not added to it. Leave at $0 to estimate land as a share of total cost instead." },
+  { quick: true, key: "building_price", label: "Existing building purchase price", unit: "usd", def: 0,
+    show: (l) => l.project.construction !== "new",
+    help: "For a building you're buying and renovating; part of the total cost above. Counts toward 4% acquisition credits, which need the building to have last been placed in service at least 10 years ago (IRC 42(d)(2)). If you'll tear the building down, put the whole price in the land price." },
 
   { key: "land_pct", label: "Land share of total cost", unit: "pct", def: 5,
-    help: "Recent Portland-area awards ran 1-7%." },
+    help: "Used only when the land purchase price is $0. Recent Portland-area awards ran 1-7%." },
   { key: "affordable_pct", label: "Share of units that are affordable", unit: "pct", def: 100 },
   { key: "vacancy", label: "Vacancy and collection loss", unit: "pct", def: 7 },
   { key: "rent_growth", label: "Yearly rent growth (pro forma)", unit: "pct", def: 2,
@@ -242,6 +247,11 @@ function calcScenario(kind) {
   const flags = state.lookup.flags;
   const housingCost = v.units * v.cost_per_unit;
   const tdc = housingCost + v.commercial_cost;
+  // Land and building purchase: the user's prices when entered, otherwise land as a share of total cost.
+  // Both are part of total cost, not added to it. A building purchase only applies to renovations.
+  const landEntered = v.land_price > 0;
+  const land = landEntered ? Math.min(v.land_price, tdc) : tdc * (v.land_pct / 100);
+  const acq = state.lookup.project.construction === "new" ? 0 : Math.max(0, Math.min(v.building_price, tdc - land));
   const rows = [];
   const add = (row) => rows.push(row);
 
@@ -260,7 +270,7 @@ function calcScenario(kind) {
   }
 
   // Historic credits on qualified rehab work.
-  const qre = tdc * (v.qre_pct / 100);
+  const qre = Math.min(tdc * (v.qre_pct / 100), Math.max(0, tdc - land - acq));
   const fedHtcCredit = qre > 0 && usable("htc") ? qre * 0.2 : 0;
   if (fedHtcCredit > 0) {
     add({ name: "Federal historic tax credit equity", amount: qre * 0.2 * v.fed_htc_price, programId: "htc",
@@ -301,12 +311,16 @@ function calcScenario(kind) {
     const landShare = tdc > 0 ? housingCost / tdc : 1;
     // Claiming the federal historic credit reduces the building's basis by the credit amount (IRC 50(c)),
     // which lowers LIHTC eligible basis too.
-    const grossBasis = (housingCost - tdc * (v.land_pct / 100) * landShare) * (v.basis_pct / 100);
+    // The building purchase is basis of its own: acquisition credits always use the 4% rate and never get the
+    // QCT/DDA boost, which applies only to new buildings and rehab spending (IRC 42(b), 42(d)(5)(B)).
+    const acqBasis = acq * landShare;
+    const grossBasis = (housingCost - land * landShare - acqBasis) * (v.basis_pct / 100);
     const basis = Math.max(0, grossBasis - fedHtcCredit * landShare);
     const boosted = flags.qct || flags.dda;
     const qualified = basis * (boosted ? 1.3 : 1) * (v.affordable_pct / 100);
     const rate = kind === "9" ? 0.09 : 0.04;
-    const formulaCredit = qualified * rate;
+    const acqCredit = acqBasis * (v.affordable_pct / 100) * 0.04;
+    const formulaCredit = qualified * rate + acqCredit;
     // 9% credits come from a limited state ceiling, and each state caps what one project can get.
     const capped = kind === "9" && v.lihtc9_cap > 0 && formulaCredit > v.lihtc9_cap;
     const annualCredit = capped ? v.lihtc9_cap : formulaCredit;
@@ -314,7 +328,12 @@ function calcScenario(kind) {
     const otherSources = rows.reduce((sum, r) => sum + r.amount, 0);
     const equity = Math.max(0, Math.min(maxEquity, tdc - otherSources));
     const htcNote = fedHtcCredit > 0 ? ` (after subtracting the ${usd(fedHtcCredit * landShare)} federal historic credit, IRC 50(c))` : "";
-    const formula = `Eligible basis ${usd(basis)}${htcNote}${boosted ? " × 130% boost (QCT/DDA)" : ""} × ${v.affordable_pct}% affordable × ${rate * 100}%${capped ? ` = ${usd(formulaCredit)}/yr, capped at the state's ${usd(v.lihtc9_cap)}/yr per project,` : ""} × 10 years × $${v.lihtc_price} = up to ${usd(maxEquity)}`;
+    const acqNote = acqBasis > 0
+      ? `, plus building purchase basis ${usd(acqBasis)} × ${v.affordable_pct}% affordable × 4% (acquisition credits get the 4% rate and no boost)`
+      : "";
+    const perYear = capped ? ` = ${usd(formulaCredit)}/yr, capped at the state's ${usd(v.lihtc9_cap)}/yr per project,`
+      : acqBasis > 0 ? ` = ${usd(formulaCredit)}/yr,` : "";
+    const formula = `${acqBasis > 0 ? "Construction and rehab basis" : "Eligible basis"} ${usd(basis)}${htcNote}${boosted ? " × 130% boost (QCT/DDA)" : ""} × ${v.affordable_pct}% affordable × ${rate * 100}%${acqNote}${perYear} × 10 years × $${v.lihtc_price} = up to ${usd(maxEquity)}`;
     rows.splice(1, 0, {
       name: `${kind}% LIHTC equity`, amount: equity, programId: kind === "9" ? "lihtc9" : "lihtc4",
       how: equity < maxEquity - 1
@@ -331,13 +350,14 @@ function calcScenario(kind) {
 
   const total = subtotal + deferred;
 
-  // Uses: where the money goes. Land, developer fee and soft costs are shares of cost; construction is the rest.
-  const land = tdc * (v.land_pct / 100);
+  // Uses: where the money goes. Land and building purchase are the user's prices (or land as a share of cost);
+  // developer fee and soft costs are shares of cost; construction is the rest.
   const fee = tdc * (v.dev_fee_pct / 100);
   const soft = housingCost * (v.soft_pct / 100);
   const uses = [
-    { key: "land", name: "Land", amount: land },
-    { key: "hard", name: "Construction", amount: Math.max(0, tdc - land - fee - soft - v.commercial_cost) },
+    { key: "land", name: landEntered ? "Land purchase" : `Land (estimated at ${v.land_pct}% of cost)`, amount: land },
+    { key: "acq", name: "Building purchase", amount: acq },
+    { key: "hard", name: "Construction", amount: Math.max(0, tdc - land - acq - fee - soft - v.commercial_cost) },
     { key: "soft", name: "Soft costs and financing", amount: soft },
     { key: "fee", name: "Developer fee", amount: fee },
     { key: "commercial", name: "Commercial space", amount: v.commercial_cost },
@@ -501,7 +521,7 @@ function renderNotes(kinds) {
     notes.push("9% and 4% housing credits can't be used on the same building, so they're shown as separate scenarios.");
   }
   if (kinds.includes("9")) {
-    notes.push("9% credits are competitive, and state agencies cap credits per project; those caps aren't modeled.");
+    notes.push(`9% credits are competitive. Each state caps 9% credits per project; ${v.lihtc9_cap > 0 ? `this page uses ${usd(v.lihtc9_cap)} a year` : "this page applies no cap because it's set to $0"} (under "Most 9% credits one project can get per year").`);
   }
   if (kinds.includes("4")) {
     const tdc = v.units * v.cost_per_unit + v.commercial_cost;
@@ -515,7 +535,15 @@ function renderNotes(kinds) {
     notes.push("Housing tax credits aren't counted because they're ruled out by your project answers (they need rental units at 60% AMI or below).");
   }
   if (usable("nmtc") && v.commercial_cost > 0) notes.push("New Markets Tax Credits are counted only for the commercial or community space; they can't finance the tax-credit housing itself.");
-  if (usable("htc") || usable("la_historic_credit")) notes.push("Historic credits can be combined with housing credits; how they interact with eligible basis isn't modeled here.");
+  if (usable("htc") || usable("la_historic_credit")) notes.push("Historic credits can be combined with housing credits. Claiming the federal historic credit lowers LIHTC eligible basis by the credit amount (IRC 50(c)), and this page subtracts it.");
+  {
+    const housingCost = v.units * v.cost_per_unit;
+    const acq = state.lookup.project.construction === "new" ? 0 : v.building_price;
+    const purchase = (v.land_price || 0) + (acq || 0);
+    if (purchase > 0 && purchase > housingCost * (1 - v.dev_fee_pct / 100 - v.soft_pct / 100)) {
+      notes.push(`Your land and building purchase prices (${usd(purchase)}) leave little or nothing for construction within the total cost of ${usd(housingCost)}. Raise the cost per unit so it includes the purchase and the work.`);
+    }
+  }
   if (usable("home")) notes.push("Federal grants can reduce LIHTC eligible basis, so HOME money is usually structured as a loan.");
   if (state.otherSources.some((src) => src.amount > 0)) notes.push("Your own sources are counted before housing tax credit equity, so the credits are sized to what's still needed.");
   if (state.mode === "site") {

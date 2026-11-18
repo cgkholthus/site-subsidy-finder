@@ -421,13 +421,13 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 /* Colors from the validated dataviz palette (light and dark steps checked for colorblind safety). */
 :root {
   --src-1: #2a78d6; --src-2: #eb6834; --src-3: #1baf7a; --src-4: #eda100; --src-5: #e87ba4; --src-6: #008300;
-  --use-1: #86b6ef; --use-2: #5598e7; --use-3: #2a78d6; --use-4: #1c5cab; --use-5: #104281;
+  --use-1: #86b6ef; --use-2: #5598e7; --use-3: #2a78d6; --use-4: #1c5cab; --use-5: #104281; --use-6: #0a2d5a;
   --seg-gap: #c3c2b7;
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --src-1: #3987e5; --src-2: #d95926; --src-3: #199e70; --src-4: #c98500; --src-5: #d55181; --src-6: #008300;
-    --use-1: #184f95; --use-2: #256abf; --use-3: #3987e5; --use-4: #6da7ec; --use-5: #9ec5f4;
+    --use-1: #184f95; --use-2: #256abf; --use-3: #3987e5; --use-4: #6da7ec; --use-5: #9ec5f4; --use-6: #cde0f8;
     --seg-gap: #52514e;
   }
 }
@@ -445,13 +445,13 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .src-4 .seg-label, .use-1 .seg-label, .use-2 .seg-label, .gap .seg-label { color: #0b0b0b; }
 @media (prefers-color-scheme: dark) {
   .use-1 .seg-label, .use-2 .seg-label { color: #ffffff; }
-  .use-4 .seg-label, .use-5 .seg-label { color: #0b0b0b; }
+  .use-4 .seg-label, .use-5 .seg-label, .use-6 .seg-label { color: #0b0b0b; }
   .gap .seg-label { color: #f0efec; }
 }
 .src-1 { background: var(--src-1); } .src-2 { background: var(--src-2); } .src-3 { background: var(--src-3); }
 .src-4 { background: var(--src-4); } .src-5 { background: var(--src-5); } .src-6 { background: var(--src-6); }
 .use-1 { background: var(--use-1); } .use-2 { background: var(--use-2); } .use-3 { background: var(--use-3); }
-.use-4 { background: var(--use-4); } .use-5 { background: var(--use-5); }
+.use-4 { background: var(--use-4); } .use-5 { background: var(--use-5); } .use-6 { background: var(--use-6); }
 .seg.gap, .swatch.gap {
   background: repeating-linear-gradient(135deg, var(--seg-gap) 0 6px, transparent 6px 10px);
   box-shadow: inset 0 0 0 1.5px var(--seg-gap);
@@ -515,3 +515,72 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .evidence-yours { color: var(--text); }
 .evidence-key { font-size: 12.5px; color: var(--muted); line-height: 1.8; margin: 6px 0 10px; }
 .evidence-key .evidence::before { content: none; }
+
+/* ---------- clickable things are pills ----------
+   Anything you can click (buttons, page links in the nav, zone chips, tabs, the mode switch, "Official source"
+   links) is a rounded pill so it reads as clickable. Text links inside sentences stay underlined links, and
+   small icon buttons (×) stay plain. */
+button, .button { border-radius: 999px; }
+.search { border-radius: 999px; padding: 5px 5px 5px 8px; }
+.search button { border-radius: 999px; }
+.zone-close, .chat-close, .other-sources .remove { border-radius: 999px; }
+
+.main-nav { gap: 6px; }
+.main-nav a {
+  padding: 7px 14px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.main-nav a:hover { border-color: var(--forest); color: var(--forest-deep); }
+.main-nav a[aria-current="page"] { background: var(--forest); border-color: var(--forest); color: var(--accent-ink); }
+
+.flags { flex-direction: row; flex-wrap: wrap; gap: 8px; }
+.flag {
+  padding: 5px 13px; border: 1px solid var(--border); border-radius: 18px; background: var(--surface);
+  color: var(--no-fg); transition: background 0.15s ease, border-color 0.15s ease;
+}
+.flag:hover, .flag[aria-expanded="true"] { border-color: var(--text); background: var(--surface); color: var(--text); }
+.flag.on { background: var(--eligible-bg); border-color: var(--eligible-bg); color: var(--eligible-fg); }
+.flag.on:hover, .flag.on[aria-expanded="true"] { background: var(--eligible-bg); border-color: var(--eligible-fg); color: var(--eligible-fg); }
+
+.tabs { gap: 6px; border-bottom: 0; padding: 2px 0 6px; }
+.tabs button {
+  padding: 7px 15px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); color: var(--muted);
+}
+.tabs button:hover { border-color: var(--forest); background: var(--surface); color: var(--forest-deep); }
+.tabs button[aria-selected="true"] { background: var(--forest); border-color: var(--forest); color: var(--accent-ink); }
+.tabs button[aria-selected="true"] .count { color: inherit; opacity: 0.8; }
+
+.mode-switch { gap: 6px; border-bottom: 0; }
+.mode-switch button {
+  padding: 8px 16px; margin: 0; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); color: var(--muted);
+}
+.mode-switch button:hover { border-color: var(--forest); background: var(--surface); color: var(--forest-deep); }
+.mode-switch button[aria-pressed="true"] { background: var(--forest); border-color: var(--forest); color: var(--accent-ink); }
+
+.assumptions details summary {
+  display: inline-block; padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface);
+}
+.assumptions details summary:hover { border-color: var(--forest); color: var(--forest-deep); }
+
+.source-line a, .zone-detail p > a:only-child {
+  display: inline-block; padding: 4px 12px; border: 1px solid var(--border); border-radius: 999px;
+  background: var(--surface); text-decoration: none; font-weight: 500;
+}
+.source-line a:hover, .zone-detail p > a:only-child:hover { border-color: var(--forest); color: var(--forest-deep); }
+
+.stack-link a {
+  padding: 14px 24px; border: 1px solid var(--forest); border-radius: 26px; background: var(--forest-soft);
+}
+.stack-link a:hover { background: var(--forest); color: var(--accent-ink); }
+.stack-link a:hover span { color: var(--accent-ink); }
+.stack-link a:hover strong { text-decoration: none; }
+.examples a {
+  display: inline-block; padding: 3px 11px; margin: 2px 0; border: 1px solid var(--border); border-radius: 999px;
+  background: var(--surface); text-decoration: none;
+}
+.examples a:hover { border-color: var(--forest); color: var(--forest-deep); }
+@media (max-width: 760px) {
+  .search { border-radius: 26px; padding: 6px; }
+  .main-nav { flex-wrap: wrap; overflow: visible; gap: 6px; }
+  .main-nav a { padding: 6px 12px; }
+}
